@@ -15,24 +15,39 @@ class SLIME:
         self.pos_y=35
         self.frame_x=0
         self.frame_y=0
-        self.slime_walk_pic = load_image('walkmaster.png')
+        self.slime_walk_pic = load_image('slimepic.png')
         self.upflag=0
+        self.hp=0
     def update(self):
-        if self.upflag==0:
+
+        if self.upflag==0: #점프인지 아닌지 확인하는 조건문
              if self.dir_x!=0:
                  self.frame_x = (self.frame_x + 1) % 13
              else:
                  self.frame_x=0
         else:
-
+            delay(0.03) #점프 구현
             self.frame_x = (self.frame_x + 1) % 13
-            if self.frame_x==5:
-                self.pos_y += 20
+            if self.frame_x==7 or self.frame_x==8:
+                self.pos_y += 25
             if self.frame_x == 0:
                 self.upflag=0
 
 
+
+        delay(0.05)
         self.pos_x += 8*self.dir_x
+
+    '''  frame y  
+          7    왼쪽으로 이동
+          6    오른쪽으로 이동
+          5    왼쪽방향보면서 점프
+          4    오른쪽 방향 보면서 점프
+          3    왼쪽방향 공격
+          2    오른쪽 방향 공격
+          1     위로 이동
+          0     아래로 이동    
+          '''
 
     def slime_handle(self):
         global running
@@ -43,13 +58,16 @@ class SLIME:
             elif event.type == SDL_KEYDOWN:
                 if event.key==SDLK_RIGHT:
                     self.dir_x+=1
-                    self.frame_y=1
+                    self.frame_y=6
                 elif event.key==SDLK_LEFT:
                     self.dir_x-=1
-                    self.frame_y =0
+                    self.frame_y =7
                 elif event.key==SDLK_UP:
                     self.dir_y+=1
-                    self.frame_y = 2
+                    if self.frame_y%2==0:
+                        self.frame_y = 4
+                    else:
+                        self.frame_y=5
                     self.upflag=1
                 elif event.key == SDLK_ESCAPE:
                     running = False
@@ -113,7 +131,7 @@ while(running):
     slime.draw()
     slime.slime_handle()
     update_canvas()
-    delay(0.05)
+
 
 
 
