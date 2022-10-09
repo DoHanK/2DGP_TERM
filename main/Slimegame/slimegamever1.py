@@ -1,5 +1,5 @@
 from pico2d import *
-
+import random
 height=800
 width=600
 
@@ -87,8 +87,17 @@ class SLIME:
     def draw(self):
         self.slime_walk_pic.clip_draw(self.frame_x*50,self.frame_y*35,50,35,self.pos_x,self.pos_y,100,50)
 
+class SUNMONSTER:
+    def __init__(self):
+        self.sunpic=load_image("sunmonster.png")
+        self.pos_x=300
+        self.pos_y=400
+        self.frame_x=5
+    def update(self):
 
-
+        self.frame_x=random.randint(0,12)
+    def draw(self):
+        self.sunpic.clip_draw(self.frame_x*50,0,50,35,self.pos_x,self.pos_y,100,50)
 
 # def handle_events():
 #     global running
@@ -110,7 +119,7 @@ class SLIME:
 
 
 slime=SLIME()
-
+sun=SUNMONSTER()
 
 
 
@@ -126,10 +135,12 @@ while(running):
 
     clear_canvas()
 
-    # background.clip_draw(0,0,800,600,400,300)
+    background.clip_draw(0,0,800,600,400,300)
     slime.update()
     slime.draw()
     slime.slime_handle()
+    sun.update()
+    sun.draw()
     update_canvas()
 
 
