@@ -1,10 +1,10 @@
 from pico2d import *
 import random
 import pdb
-height=800
-width=600
+width=800
+height=600
 
-open_canvas(height,width)
+open_canvas(width,height)
 background= load_image('backgrond.png')
 '''==================================함수 정의============================='''
 
@@ -19,8 +19,13 @@ class BULLET:
     def update(self):
         if self.state == "right":
            self.pos_x+=15
+           if self.pos_x >width:
+               return True
         elif self.state == "left":
            self.pos_x-=15
+           if self.pos_x<0:
+               return True
+
     def draw(self):
         if self.state=="right":
           self.r_pic.clip_draw(0,0, 50, 35, self.pos_x, self.pos_y, 30, 15)
@@ -110,9 +115,12 @@ class SLIME:
 
 
         #총알 관리
+
         for bullet in bullets:
-            bullet.update()
+            if bullet.update():
+                bullets.remove(bullet)
             bullet.draw()
+
 
 
     '''  frame y  
@@ -157,7 +165,7 @@ class SLIME:
                         else:
                            self.frame_y=5
                         self.jumping = 1
-                if event.key==SDLK_SPACE:
+                if event.key==SDLK_SPACE: ##체력 감소
                     self.attacking=1
                     self.makebullet()
                     self.hp-=1
@@ -187,9 +195,10 @@ class SLIME:
 
     def draw(self):
         if self.attacking:
-            self.attack_effect_pic.clip_draw(self.attack_frame * 50, 0, 50, 35, self.pos_x, self.pos_y, 5*self.hp/6, 5*self.hp/6)
-
+            self.attack_effect_pic.clip_draw(self.attack_frame * 50, 0, 50, 35, self.pos_x, self.pos_y, 6 * self.hp / 5,
+                                             6 * self.hp / 5)
         self.slime_walk_pic.clip_draw(self.frame_x * 50, self.frame_y * 35, 50, 35, self.pos_x, self.pos_y, 2*self.hp,self.hp)
+
 
 
 
