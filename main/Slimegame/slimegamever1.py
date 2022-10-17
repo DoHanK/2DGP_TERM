@@ -8,21 +8,46 @@ open_canvas(height,width)
 background= load_image('backgrond.png')
 '''==================================함수 정의============================='''
 
+
+class BULLET:
+    def __init__(self):
+        self.l_pic=load_image("L_bullet.png")
+        self.r_pic=load_image("R_bullet.png")
+        self.pos_x=0
+        self.pos_y=0
+        self.state="right"
+    def update(self):
+        if self.state == "right":
+           self.pos_x+=15
+        elif self.state == "left":
+           self.pos_x-=15
+    def draw(self):
+        if self.state=="right":
+          self.r_pic.clip_draw(0,0, 50, 35, self.pos_x, self.pos_y, 30, 15)
+        elif self.state=="left":
+            self.l_pic.clip_draw(0, 0, 50, 35, self.pos_x, self.pos_y, 30, 15)
+
+#총알 객체 생성
+bullets=[]
+
 class SLIME:
     def __init__(self):
         self.dir_x=0
         self.dir_y=0
         self.pos_x=100
-        self.pos_y=35
+        self.pos_y= 35
         self.frame_x=0
         self.frame_y=0
         self.slime_walk_pic = load_image('slimepic.png')
-        self.state="running" #running, jumping, attack
-        self.hp=0
+        self.attack_effect_pic=load_image('deadsprite.png')
+        self.attack_frame=0
+        self.attacking=0
+        self.hp=80
         self.jump_height = 16
         self.jumping=0
         self.y_velocity=self.jump_height
         self.y_gravity=2
+
 
     def update(self):
     #점프 관련 업데이트
@@ -73,12 +98,22 @@ class SLIME:
                       else:
                           self.frame_y = 7
                       self.frame_x = 0
-
-
+    #공격 임펙트
+        if self.attacking:
+           self.attack_frame= (self.attack_frame+1)%10
+           if self.attack_frame==0:
+               self.attacking=0
 
 
         delay(0.05)
         self.pos_x += 8*self.dir_x
+
+
+        #총알 관리
+        for bullet in bullets:
+            bullet.update()
+            bullet.draw()
+
 
     '''  frame y  
           7    왼쪽으로 이동
@@ -114,7 +149,7 @@ class SLIME:
                     else:
                         self.frame_y=7
 
-                elif event.key==SDLK_UP:
+                if event.key==SDLK_UP:
                     if not self.jumping:
                         self.dir_y+=1
                         if self.frame_y%2==0:
@@ -122,7 +157,10 @@ class SLIME:
                         else:
                            self.frame_y=5
                         self.jumping = 1
-
+                if event.key==SDLK_SPACE:
+                    self.attacking=1
+                    self.makebullet()
+                    self.hp-=1
                 elif event.key == SDLK_ESCAPE:
                     running = False
 
@@ -135,8 +173,25 @@ class SLIME:
                 elif event.key==SDLK_LEFT:
                     self.dir_x+=1
 
+
+    def makebullet(self):
+        bullets.append(BULLET())
+        if(self.frame_y%2==0):
+            bullets[-1].state ='right'
+            bullets[-1].pos_y= self.pos_y
+            bullets[-1].pos_x = self.pos_x
+        else:
+            bullets[-1].state = "left"
+            bullets[-1].pos_y = self.pos_y
+            bullets[-1].pos_x = self.pos_x
+
     def draw(self):
-        self.slime_walk_pic.clip_draw(self.frame_x*50,self.frame_y*35,50,35,self.pos_x,self.pos_y,100,50)
+        if self.attacking:
+            self.attack_effect_pic.clip_draw(self.attack_frame * 50, 0, 50, 35, self.pos_x, self.pos_y, 5*self.hp/6, 5*self.hp/6)
+
+        self.slime_walk_pic.clip_draw(self.frame_x * 50, self.frame_y * 35, 50, 35, self.pos_x, self.pos_y, 2*self.hp,self.hp)
+
+
 
 class SUNMONSTER:
     def __init__(self):
@@ -151,21 +206,7 @@ class SUNMONSTER:
     def draw(self):
         self.sunpic.clip_draw(self.frame_x*50,0,50,35,self.pos_x,self.pos_y,100,50)
 
-# def handle_events():
-#     global running
-#     global slime
-#     events=get_events()
-#     for event in events:
-#         if event.type ==SDL_QUIT:
-#             running=False
-#         elif event.type==SDL_KEYDOWN:
-#             if event.type==SDLK_LEFT:
-#                 slime.dir_x -= 1
-#                 slime.frame_y = 0
-#             elif event.type==SDLK_RIGHT:
-#                 slime.dir_x+=1
-#                 slime.frame_y=1
-#
+
 
 
 
