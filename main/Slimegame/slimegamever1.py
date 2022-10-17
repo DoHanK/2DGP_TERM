@@ -8,6 +8,18 @@ open_canvas(width,height)
 background= load_image('backgrond.png')
 '''==================================함수 정의============================='''
 
+class item:
+    def __init__(self):
+        self.image=load_image("item.png")
+        self.frame_x=0
+        self.frame_y=0
+
+    def update(self):
+        self.frame_x=(self.frame_x+1)%4
+        if(self.frame_x==0):
+            self.frame_y=(self.frame_y+1)%3
+    def draw(self):
+        self.image.clip_draw(83*self.frame_x,85*self.frame_y,83,85,300,200,35,35)
 
 class BULLET:
     def __init__(self):
@@ -31,10 +43,8 @@ class BULLET:
           self.r_pic.clip_draw(0,0, 50, 35, self.pos_x, self.pos_y, 30, 15)
         elif self.state=="left":
             self.l_pic.clip_draw(0, 0, 50, 35, self.pos_x, self.pos_y, 30, 15)
-
 #총알 객체 생성
 bullets=[]
-
 class SLIME:
     def __init__(self):
         self.dir_x=0
@@ -197,7 +207,7 @@ class SLIME:
         if self.attacking:
             self.attack_effect_pic.clip_draw(self.attack_frame * 50, 0, 50, 35, self.pos_x, self.pos_y, 6 * self.hp / 5,
                                              6 * self.hp / 5)
-        self.slime_walk_pic.clip_draw(self.frame_x * 50, self.frame_y * 35, 50, 35, self.pos_x, self.pos_y, 2*self.hp,self.hp)
+        self.slime_walk_pic.clip_draw(self.frame_x * 50, self.frame_y * 35, 50, 35, self.pos_x, self.pos_y, 2*self.hp ,self.hp)
 
 
 
@@ -222,7 +232,7 @@ class SUNMONSTER:
 
 slime=SLIME()
 sun=SUNMONSTER()
-
+item=item()
 
 
 '''변수 선언들'''
@@ -231,13 +241,15 @@ running=True
 
 
 
-
+# SDL_IntersectRect()
 
 while(running):
 
     clear_canvas()
 
     background.clip_draw(0,0,800,600,400,300)
+    item.update()
+    item.draw()
     slime.update()
     slime.draw()
     slime.slime_handle()
