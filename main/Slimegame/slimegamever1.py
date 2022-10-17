@@ -1,5 +1,6 @@
 from pico2d import *
 import random
+import pdb
 height=800
 width=600
 
@@ -16,22 +17,63 @@ class SLIME:
         self.frame_x=0
         self.frame_y=0
         self.slime_walk_pic = load_image('slimepic.png')
-        self.upflag=0
+        self.state="running" #running, jumping, attack
         self.hp=0
-    def update(self):
+        self.jump_height = 16
+        self.jumping=0
+        self.y_velocity=self.jump_height
+        self.y_gravity=2
 
-        if self.upflag==0: #점프인지 아닌지 확인하는 조건문
+    def update(self):
+    #점프 관련 업데이트
+        if self.jumping==0: #점프인지 아닌지 확인하는 조건문
              if self.dir_x!=0:
                  self.frame_x = (self.frame_x + 1) % 13
              else:
-                 self.frame_x=0
+                 if self.frame_y%2==0:
+                     self.frame_y = 6
+                 else:
+                     self.frame_y=5
+                     self.frame_x= 0
         else:
-            delay(0.03) #점프 구현
-            self.frame_x = (self.frame_x + 1) % 13
-            if self.frame_x==7 or self.frame_x==8:
-                self.pos_y += 25
-            if self.frame_x == 0:
-                self.upflag=0
+                 if not self.dir_x == 0:        #점프하면서 오른쪽왼쪽으로 이동
+                    if self.frame_y % 2 == 0:
+                         self.frame_y = 2
+                    else:
+                        self.frame_y = 3
+
+                #점프 구현 중력 가속도
+                 self.pos_y+=self.y_velocity
+                 self.y_velocity-=self.y_gravity
+
+              #점프하는 동시에 이동할때 이미지
+                 if(self.y_velocity>self.jump_height-7): # 0에서 최고 높이까지 갈때 스프라이트 맞춰주기
+                     if self.dir_x == 0:
+                         self.frame_x = (self.frame_x + 1) % 7
+                     else:
+                         self.frame_x = (self.frame_x + 1) % 6
+
+                 elif(self.y_velocity<self.jump_height-6) and (self.y_velocity>0): #최고높이일때
+                     if self.dir_x == 0:
+                         self.frame_x = 7
+                     else:
+                         self.frame_x = (self.frame_x + 1) % 4 + 4
+
+                 else:  #날라가는 모션 취하기
+                     if self.dir_x == 0: #점프하면서 이동하지않을때
+                             self.frame_x = 0
+                     else: #점프하면서 이동할때
+                         self.frame_x = (self.frame_x +1)%4+4
+
+                 if(self.y_velocity< -self.jump_height):##y축으로의 이동속도가 점프보다 낮을때
+                      self.jumping =False
+                      self.y_velocity=self.jump_height
+                      if self.frame_y % 2 == 0:
+                          self.frame_y = 6
+                      else:
+                          self.frame_y = 7
+                      self.frame_x = 0
+
 
 
 
@@ -56,19 +98,31 @@ class SLIME:
             if event.type == SDL_QUIT:
                  running = False
             elif event.type == SDL_KEYDOWN:
+
                 if event.key==SDLK_RIGHT:
                     self.dir_x+=1
-                    self.frame_y=6
+                    if self.jumping:
+                        self.frame_y =2
+                    else:
+                         self.frame_y=6
+
+
                 elif event.key==SDLK_LEFT:
                     self.dir_x-=1
-                    self.frame_y =7
-                elif event.key==SDLK_UP:
-                    self.dir_y+=1
-                    if self.frame_y%2==0:
-                        self.frame_y = 4
+                    if self.jumping:
+                        self.frame_y=3
                     else:
-                        self.frame_y=5
-                    self.upflag=1
+                        self.frame_y=7
+
+                elif event.key==SDLK_UP:
+                    if not self.jumping:
+                        self.dir_y+=1
+                        if self.frame_y%2==0:
+                           self.frame_y = 4
+                        else:
+                           self.frame_y=5
+                        self.jumping = 1
+
                 elif event.key == SDLK_ESCAPE:
                     running = False
 
@@ -78,11 +132,8 @@ class SLIME:
             elif event.type == SDL_KEYUP:
                 if event.key==SDLK_RIGHT:
                     self.dir_x-=1
-
                 elif event.key==SDLK_LEFT:
                     self.dir_x+=1
-                elif event.key == SDLK_UP:
-                    self.dir_y -= 1
 
     def draw(self):
         self.slime_walk_pic.clip_draw(self.frame_x*50,self.frame_y*35,50,35,self.pos_x,self.pos_y,100,50)
@@ -93,6 +144,7 @@ class SUNMONSTER:
         self.pos_x=300
         self.pos_y=400
         self.frame_x=5
+
     def update(self):
 
         self.frame_x=random.randint(0,12)
