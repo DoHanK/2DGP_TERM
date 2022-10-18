@@ -80,17 +80,24 @@ class SLIME:
                      self.frame_x= 0
         else:
                  if not self.dir_x == 0:        #점프하면서 오른쪽왼쪽으로 이동
-                    if self.frame_y % 2 == 0:
-                         self.frame_y = 2
+                    if self.flying==1:
+                        if self.frame_y % 2 == 0:
+                            self.frame_y = 0
+                        else:
+                            self.frame_y = 1
+
                     else:
-                        self.frame_y = 3
+                        if self.frame_y % 2 == 0:
+                             self.frame_y = 2
+                        else:
+                            self.frame_y = 3
 
                  if self.y_velocity ==self.jump_height:
                     self.top_jump_point=self.pos_y
 
 
                 #점프 구현 중력 가속도
-               
+
                  if(self.y_velocity>=0):
                      self.pos_y += self.y_velocity
                      self.y_velocity -= self.y_gravity
@@ -124,7 +131,10 @@ class SLIME:
                      if self.dir_x == 0: #점프하면서 이동하지않을때
                              self.frame_x = 0
                      else: #점프하면서 이동할때
-                         self.frame_x = (self.frame_x +1)%4+4
+                         if self.flying == 1:
+                            self.frame_x = (self.frame_x +1)%2+7
+                         else:
+                            self.frame_x = (self.frame_x +1)%4+4
 
                  if(self.pos_y<self.top_jump_point):##y축으로의 이동속도가 점프보다 낮을때
                       self.pos_y =self.top_jump_point
@@ -207,6 +217,7 @@ class SLIME:
                     self.hp-=1
                 if event.key==SDLK_LCTRL:
                     self.flying=1
+                    self.frame_x=7
                 elif event.key == SDLK_ESCAPE:
                     running = False
 
