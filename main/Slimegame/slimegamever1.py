@@ -1,3 +1,5 @@
+import math
+
 from pico2d import *
 import random
 import pdb
@@ -60,9 +62,10 @@ class SLIME:
         self.hp=80
         self.jump_height = 16
         self.jumping=0
+        self.flying=0
         self.y_velocity=self.jump_height
         self.y_gravity=2
-
+        self.top_jump_point=0
 
     def update(self):
     #점프 관련 업데이트
@@ -82,12 +85,29 @@ class SLIME:
                     else:
                         self.frame_y = 3
 
+                 if self.y_velocity ==self.jump_height:
+                    self.top_jump_point=self.pos_y
+
+
                 #점프 구현 중력 가속도
-                 self.pos_y+=self.y_velocity
-                 self.y_velocity-=self.y_gravity
+               
+                 if(self.y_velocity>=0):
+                     self.pos_y += self.y_velocity
+                     self.y_velocity -= self.y_gravity
+                 else:
+                     if self.flying:  # flying 기능 구현
+                         if(self.flying==2):
+                             self.pos_y-=8
+                         else:
+                             self.pos_y -= 2
+                     else:
+                         self.pos_y += self.y_velocity
+                         self.y_velocity -= self.y_gravity
+
 
               #점프하는 동시에 이동할때 이미지
                  if(self.y_velocity>self.jump_height-7): # 0에서 최고 높이까지 갈때 스프라이트 맞춰주기
+
                      if self.dir_x == 0:
                          self.frame_x = (self.frame_x + 1) % 7
                      else:
@@ -100,14 +120,20 @@ class SLIME:
                          self.frame_x = (self.frame_x + 1) % 4 + 4
 
                  else:  #날라가는 모션 취하기
+
                      if self.dir_x == 0: #점프하면서 이동하지않을때
                              self.frame_x = 0
                      else: #점프하면서 이동할때
                          self.frame_x = (self.frame_x +1)%4+4
 
-                 if(self.y_velocity< -self.jump_height):##y축으로의 이동속도가 점프보다 낮을때
+                 if(self.pos_y<self.top_jump_point):##y축으로의 이동속도가 점프보다 낮을때
+                      self.pos_y =self.top_jump_point
+                      print(self.top_jump_point)
+                      print("        ")
+                      print(self.pos_y)
                       self.jumping =False
                       self.y_velocity=self.jump_height
+                      self.top_jump_point=0
                       if self.frame_y % 2 == 0:
                           self.frame_y = 6
                       else:
@@ -179,6 +205,8 @@ class SLIME:
                     self.attacking=1
                     self.makebullet()
                     self.hp-=1
+                if event.key==SDLK_LCTRL:
+                    self.flying=1
                 elif event.key == SDLK_ESCAPE:
                     running = False
 
@@ -190,7 +218,8 @@ class SLIME:
                     self.dir_x-=1
                 elif event.key==SDLK_LEFT:
                     self.dir_x+=1
-
+                if event.key==SDLK_LCTRL:
+                    self.flying=2
 
     def makebullet(self):
         bullets.append(BULLET())
