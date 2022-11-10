@@ -257,10 +257,10 @@ class IDLE:
     def draw(self):
 
         if self.face_dir > 0:
-            self.slime_walk_pic.clip_draw(self.frame_x * 50, 6*35, 50, 35, self.x, self.y,100,100)
+            self.slime_walk_pic.clip_draw(self.frame_x * 50, 6*35, 50, 35, self.x, self.y,self.hp,self.hp)
         else:
-            self.slime_walk_pic.clip_draw(self.frame_x * 50, 7*35, 50, 35, self.x, self.y,100,100)
-
+            self.slime_walk_pic.clip_draw(self.frame_x * 50, 7*35, 50, 35, self.x, self.y,self.hp,self.hp)
+        draw_rectangle(*self.get_bb())
 
 class RUN:
     def enter(self, event):
@@ -286,9 +286,10 @@ class RUN:
         self.x = clamp(0, self.x, 800)
     def draw(self):
         if self.dir > 0:
-            self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 6 * 35, 50, 35, self.x, self.y,100,100)
+            self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 6 * 35, 50, 35, self.x, self.y,self.hp,self.hp)
         else:
-            self.slime_walk_pic.clip_draw(int(self.frame_x)* 50, 7 * 35, 50, 35, self.x, self.y,100,100)
+            self.slime_walk_pic.clip_draw(int(self.frame_x)* 50, 7 * 35, 50, 35, self.x, self.y,self.hp,self.hp)
+        draw_rectangle(*self.get_bb())
 
 
 next_state = {
@@ -304,10 +305,11 @@ RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0) # m/s
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 
-# Boy Action Speed
+# Slime Action Speed
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
+
 class SLIME:
 
     def __init__(self):
@@ -320,6 +322,15 @@ class SLIME:
         self.event_que=[]
         self.cur_state=IDLE
         self.cur_state.enter(self,None)
+
+        self.hp=100
+        self.jump_height = 16
+        self.jumping=0
+        self.flying=0
+        self.j_velocity=self.jump_height
+        self.j_gravity=2
+
+
     def update(self):
         self.cur_state.do(self)
 
@@ -348,4 +359,5 @@ class SLIME:
             key_event = key_event_table[(event.type, event.key)]
             self.add_event(key_event)
 
-
+    def  get_bb(self):
+        return self.x-self.hp/2+10,    self.y-self.hp/2 +15,     self.x+self.hp/2-10,     self.y+self.hp/2-15
