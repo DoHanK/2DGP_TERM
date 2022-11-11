@@ -1,16 +1,24 @@
+import random
+
 from pico2d import*
-pico2d.open_canvas()
+
 
 class BACKGROUND:
+    flag=1
     def __init__(self):
-        self.tree1_img=load_image('tree.png')
-        self.tileset_img=load_image('tilesetgrass.png')
-        self.sky_img=load_image('sky.png')
-        self.bush_img=load_image("bush.png")
+        if BACKGROUND.flag:
+            self.tree1_img=load_image('tree.png')
+            self.tileset_img=load_image('tilesetgrass.png')
+            self.sky_img=load_image('sky.png')
+            self.bush_img=load_image("bush.png")
+            BACKGROUND.flag=0
         self.pic1pos=[5,5,86,27] #잔디있는거
         self.pic2pos=[5,5,86,16]
         self.colum=32
         self.raw=12
+        #앞가 위치 뒤에가 크기
+        self.tree_pos=[ (random.randint(0,1),random.randint(100,200)) for x in range(10)]
+
         #1은 잔디있는 땅
         self.grid=[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -21,14 +29,17 @@ class BACKGROUND:
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                    ]
     def draw(self):
+
         # 하늘
         self.sky_img.clip_composite_draw(0, 0,self.sky_img.w,self.sky_img.h,0 , '',400,300,800,600)
-        self.tree1_img.draw_to_origin(0,0,400,400)
+        for x in range(10):
+            x1,y=self.tree_pos[x]
+            self.tree1_img.draw_to_origin(x*(160+x1),40,200+y,200+y)
 
         for y in range(0,self.raw):
             for x in range(0,self.colum):
@@ -40,6 +51,15 @@ class BACKGROUND:
         pass
     def get_bb(self,x,y):
         return 50*x, 50*(11-y),50*x+50,50*(11-y)+50
+    def handle_collision(self,other,massage):
+        #점프에 대한 충돌 처리
+       pass
+
+
+
+
+
+
 def test_self():
     while not(get_events()==SDLK_DOWN):
       background=BACKGROUND()

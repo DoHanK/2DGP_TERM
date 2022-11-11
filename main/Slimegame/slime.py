@@ -1,226 +1,18 @@
 from pico2d import *
 import game_world
 import game_framework
-
-
+from bullet import BULLET
 '''==================================함수 정의============================='''
-
-
-
-# class SLIME:
-#     def __init__(self):
-#         self.dir_x=0
-#         self.dir_y=0
-#         self.pos_x=100
-#         self.pos_y= 35
-#         self.frame_x=0
-#         self.frame_y=0
-#         self.slime_walk_pic = load_image('slimepic.png')
-#         self.attack_effect_pic=load_image('deadsprite.png')
-#         self.attack_frame=0
-#         self.attacking=0
-#         self.hp=80
-#         self.jump_height = 16
-#         self.jumping=0
-#         self.flying=0
-#         self.y_velocity=self.jump_height
-#         self.y_gravity=2
-#         self.top_jump_point=0
-#
-#     def update(self):
-#     #점프 관련 업데이트
-#         if self.jumping==0: #점프인지 아닌지 확인하는 조건문
-#              if self.dir_x!=0:
-#                  self.frame_x = (self.frame_x + 1) % 13
-#              else:
-#                  if self.frame_y%2==0:
-#                      self.frame_y = 6
-#                  else:
-#                      self.frame_y=5
-#                      self.frame_x= 0
-#         else:
-#                  if not self.dir_x == 0:        #점프하면서 오른쪽왼쪽으로 이동
-#                     if self.flying==1:
-#                         if self.frame_y % 2 == 0:
-#                             self.frame_y = 0
-#                         else:
-#                             self.frame_y = 1
-#
-#                     else:
-#                         if self.frame_y % 2 == 0:
-#                              self.frame_y = 2
-#                         else:
-#                             self.frame_y = 3
-#
-#                  if self.y_velocity ==self.jump_height:
-#                     self.top_jump_point=self.pos_y
-#
-#
-#                 #점프 구현 중력 가속도
-#
-#                  if(self.y_velocity>=0):
-#                      self.pos_y += self.y_velocity
-#                      self.y_velocity -= self.y_gravity
-#                  else:
-#                      if self.flying:  # flying 기능 구현
-#                          if(self.flying==2):
-#                              self.pos_y-=8
-#                          else:
-#                              self.pos_y -= 2
-#                      else:
-#                          self.pos_y += self.y_velocity
-#                          self.y_velocity -= self.y_gravity
-#
-#
-#               #점프하는 동시에 이동할때 이미지
-#                  if(self.y_velocity>self.jump_height-7): # 0에서 최고 높이까지 갈때 스프라이트 맞춰주기
-#
-#                      if self.dir_x == 0:
-#                          self.frame_x = (self.frame_x + 1) % 7
-#                      else:
-#                          self.frame_x = (self.frame_x + 1) % 6
-#
-#                  elif(self.y_velocity<self.jump_height-6) and (self.y_velocity>0): #최고높이일때
-#                      if self.dir_x == 0:
-#                          self.frame_x = 7
-#                      else:
-#                          self.frame_x = (self.frame_x + 1) % 4 + 4
-#
-#                  else:  #날라가는 모션 취하기
-#
-#                      if self.dir_x == 0: #점프하면서 이동하지않을때
-#                              self.frame_x = 0
-#                      else: #점프하면서 이동할때
-#                          if self.flying == 1:
-#                             self.frame_x = (self.frame_x +1)%2+7
-#                             pass
-#                          else:
-#                             self.frame_x = (self.frame_x +1)%4+4
-#
-#                  if(self.pos_y<self.top_jump_point):##y축으로의 이동속도가 점프보다 낮을때
-#                       self.pos_y =self.top_jump_point
-#                       print(self.top_jump_point)
-#                       print("        ")
-#                       print(self.pos_y)
-#                       self.jumping =False
-#                       self.y_velocity=self.jump_height
-#                       self.top_jump_point=0
-#                       if self.frame_y % 2 == 0:
-#                           self.frame_y = 6
-#                       else:
-#                           self.frame_y = 7
-#                       self.frame_x = 0
-#     #공격 임펙트
-#         if self.attacking:
-#            self.attack_frame= (self.attack_frame+1)%10
-#            if self.attack_frame==0:
-#                self.attacking=0
-#
-#
-#         delay(0.05)
-#         self.pos_x += 8*self.dir_x
-#
-#
-#         #총알 관리
-#
-#         for bullet in bullets:
-#             if bullet.update():
-#                 bullets.remove(bullet)
-#             bullet.draw()
-#
-#
-#
-#     '''  frame y
-#           7    왼쪽으로 이동
-#           6    오른쪽으로 이동
-#           5    왼쪽방향보면서 점프
-#           4    오른쪽 방향 보면서 점프
-#           3    왼쪽방향 공격
-#           2    오른쪽 방향 공격
-#           1     위로 이동
-#           0     아래로 이동
-#           '''
-#
-#     def slime_handle(self):
-#         global running
-#         events = get_events()
-#         for event in events:
-#             if event.type == SDL_QUIT:
-#                  running = False
-#             elif event.type == SDL_KEYDOWN:
-#
-#                 if event.key==SDLK_RIGHT:
-#                     self.dir_x+=1
-#                     if self.jumping:
-#                         self.frame_y =2
-#                     else:
-#                          self.frame_y=6
-#
-#
-#                 elif event.key==SDLK_LEFT:
-#                     self.dir_x-=1
-#                     if self.jumping:
-#                         self.frame_y=3
-#                     else:
-#                         self.frame_y=7
-#
-#                 if event.key==SDLK_UP:
-#                     if not self.jumping:
-#                         self.dir_y+=1
-#                         if self.frame_y%2==0:
-#                            self.frame_y = 4
-#                         else:
-#                            self.frame_y=5
-#                         self.jumping = 1
-#                 if event.key==SDLK_SPACE: ##체력 감소
-#                     self.attacking=1
-#                     self.makebullet()
-#                     self.hp-=1
-#                 if event.key==SDLK_LCTRL:
-#                     self.flying=1
-#                     self.frame_x=7
-#                 elif event.key == SDLK_ESCAPE:
-#                     running = False
-#
-#
-#
-#
-#             elif event.type == SDL_KEYUP:
-#                 if event.key==SDLK_RIGHT:
-#                     self.dir_x-=1
-#                 elif event.key==SDLK_LEFT:
-#                     self.dir_x+=1
-#                 if event.key==SDLK_LCTRL:
-#                     self.flying=2
-#
-#     def makebullet(self):
-#         bullets.append(BULLET())
-#         if(self.frame_y%2==0):
-#             bullets[-1].state ='right'
-#             bullets[-1].pos_y= self.pos_y
-#             bullets[-1].pos_x = self.pos_x
-#         else:
-#             bullets[-1].state = "left"
-#             bullets[-1].pos_y = self.pos_y
-#             bullets[-1].pos_x = self.pos_x
-#
-#     def draw(self):
-#         if self.attacking:
-#             self.attack_effect_pic.clip_draw(self.attack_frame * 50, 0, 50, 35, self.pos_x, self.pos_y, 6 * self.hp / 5,
-#                                              6 * self.hp / 5)
-#         self.slime_walk_pic.clip_draw(self.frame_x * 50, self.frame_y * 35, 50, 35, self.pos_x, self.pos_y, 2*self.hp ,self.hp)
-
-
-#1 : 이벤트 정의
-RD, LD, RU, LU,JD= range(5)
-event_name=['RD','LD','RU','LU','JD']
+RD, LD, RU, LU,JD,SPACE= range(6)
+event_name=['RD','LD','RU','LU','JD','SPACE']
 
 key_event_table = {
     (SDL_KEYDOWN, SDLK_RIGHT): RD,
     (SDL_KEYDOWN, SDLK_LEFT): LD,
     (SDL_KEYUP, SDLK_RIGHT): RU,
     (SDL_KEYUP, SDLK_LEFT): LU,
-    (SDL_KEYDOWN,SDLK_UP):JD
+    (SDL_KEYDOWN,SDLK_UP):JD,
+    (SDL_KEYDOWN,SDLK_SPACE):SPACE
 }
 
 #  frame y
@@ -248,7 +40,8 @@ class IDLE:
     @staticmethod
     def exit(self,event):
         print('EXIT IDLE')
-
+        if event == SPACE:
+            self.shoot_bullet()
     @staticmethod
     def do(self):
         self.jumping_update()
@@ -284,7 +77,8 @@ class RUN:
     def exit(self,event):
         print('EXIT RUN')
         self.face_dir=self.dir
-
+        if event == SPACE:
+            self.shoot_bullet()
 
 
     def do(self):
@@ -302,8 +96,8 @@ class RUN:
 
 
 next_state = {
-    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN,JD:IDLE},
-    RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, JD:RUN},
+    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN,JD:IDLE,SPACE:IDLE},
+    RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, JD:RUN,SPACE:RUN},
 }
 
 
@@ -320,24 +114,24 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
 class SLIME:
-
+    slime_walk_pic= None
     def __init__(self):
-        self.x,self.y=800//2,85
+        self.x,self.y=40,400
         self.frame_x=0
         self.dir, self.face_dir=1,1
-        self.slime_walk_pic = load_image('slimepic.png')
-        self.attack_effect_pic=load_image('deadsprite.png')
-
+        if SLIME.slime_walk_pic==None:
+            SLIME.slime_walk_pic = load_image('slimepic.png')
+            self.attack_effect_pic=load_image('deadsprite.png')
+        self.background=None
         self.event_que=[]
         self.cur_state=IDLE
         self.cur_state.enter(self,None)
-
         self.hp=100
-        self.jump_height = 8
-        self.jump_flag=0
+        self.jump_height = 6.5
+        self.jump_flag=1
         self.flying=0
         self.j_velocity=self.jump_height
-        self.j_gravity=1
+        self.j_gravity=0.15
 
 
     def update(self):
@@ -369,18 +163,17 @@ class SLIME:
             self.add_event(key_event)
 
     def  get_bb(self):
-        return self.x-self.hp/2+25,    self.y-self.hp/2 +15,     self.x+self.hp/2-25,     self.y+self.hp/2-15
+        return self.x-self.hp/2+220/800*self.hp,    self.y-self.hp/2 +100/800*self.hp,     self.x+self.hp/2-220/800*self.hp,     self.y+self.hp/2-100/800*self.hp
     def handle_collision(self,other,massage):
         #점프에 대한 충돌 처리
-        if massage=='slime:background':
+        if massage=='crush':
                 self.x -= self.face_dir * RUN_SPEED_PPS * game_framework.frame_time
         elif massage=='g':
             if self.jump_flag==1:
                  self.y -= self.j_velocity * RUN_SPEED_PPS * game_framework.frame_time
-                 self.j_velocity=0
                  self.jump_flag=0
             elif self.jump_flag==0:
-                 self.y +=self.j_gravity*RUN_SPEED_PPS*game_framework.frame_time
+                 self.y +=RUN_SPEED_PPS*game_framework.frame_time
 
 
 
@@ -398,7 +191,10 @@ class SLIME:
             self.y+=self.j_velocity*RUN_SPEED_PPS*game_framework.frame_time
             self.j_velocity-=self.j_gravity
         elif self.jump_flag==0:
-            self.y-=self.j_gravity*RUN_SPEED_PPS*game_framework.frame_time
+            self.y-=RUN_SPEED_PPS*game_framework.frame_time
 
-
-        pass
+    def shoot_bullet(self):
+        self.hp -=1
+        bullet=BULLET(self.x,self.y,self.face_dir)
+        game_world.add_object(bullet,1)
+        game_world.add_collision_pairs(bullet, self.background ,'b')

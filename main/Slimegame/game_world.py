@@ -1,6 +1,5 @@
-
 objects=[[],[],[]]
-
+collision_group=dict()
 def add_object(o,depth):
     objects[depth].append(o)
 
@@ -8,9 +7,10 @@ def add_objecccts(ol,depth):
     objects[depth]+=ol
 
 def remove_object(o):
-    for layer in objects:
+    for layer in objects.copy():
         if o in layer:
             layer.remove(o)
+            remove_collision_object(o)
             del o
             return
 
@@ -29,3 +29,36 @@ def clear():
     for layer in objects:
         layer.clear()
 
+
+def add_collision_pairs(a,b,group):
+    if group not in collision_group:
+        print('Add new group',group)
+        collision_group[group] =[[ ],[ ]]
+    if a:
+        if type(b) is list:
+            collision_group[group][1]  +=b
+        else:
+            collision_group[group][1].append(b)
+    if b:
+        if type(a) is list:
+            collision_group[group][0] +=a
+        else:
+            collision_group[group] [0] .append(a)
+
+def all_collision_pairs():
+    for group, pairs in collision_group.items():
+        for a in pairs[0] :
+            for b in pairs[1]:
+                yield a, b ,group
+
+
+def remove_collision_object(o):
+    for pairs in collision_group.values():
+        if o in pairs[0]:
+            print("delete bullet0")
+            pairs[0].remove(o)
+            break
+        if o in pairs[1]:
+            print("delete bullet1")
+            pairs[1].remove(o)
+            break

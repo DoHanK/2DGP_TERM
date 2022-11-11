@@ -3,7 +3,7 @@ import game_framework
 import game_world
 from slime import SLIME
 from background import BACKGROUND
-
+from bullet import BULLET
 width=800
 height=600
 
@@ -25,9 +25,11 @@ def enter():
     global slime,background
     slime=SLIME()
     background=BACKGROUND()
+    slime.background=background
     game_world.add_object(background, 1)
     game_world.add_object(slime,2)
-
+    game_world.add_collision_pairs(slime, background, 'g')
+    game_world.add_collision_pairs(slime, background, 'crush')
 # 종료
 def exit():
   game_world.clear()
@@ -35,12 +37,10 @@ def exit():
 def update():
     for game_object in game_world.all_objects():
         game_object.update()
-        if collide(slime,background,'g'):
-            slime.handle_collision(background,'g')
-            print("collision")
-        if collide(slime,background,'crush'):
-            slime.handle_collision(background,'slime:background')
-            print("crush")
+    for a , b , group in game_world.all_collision_pairs():
+        if collide(a,b,group):
+            a.handle_collision(b,group)
+            b.handle_collision(a,group)
 
 def draw_world():
    for game_object in game_world.all_objects():
