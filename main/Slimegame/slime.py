@@ -280,7 +280,7 @@ class RUN:
 
 
     def do(self):
-        print(game_framework.frame_time)
+        
         self.frame_x =(self.frame_x + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 13
         self.x += self.dir*RUN_SPEED_PPS*game_framework.frame_time
         self.x = clamp(0, self.x, 800)
@@ -313,7 +313,7 @@ FRAMES_PER_ACTION = 8
 class SLIME:
 
     def __init__(self):
-        self.x,self.y=800//2,90
+        self.x,self.y=800//2,85
         self.frame_x=0
         self.dir, self.face_dir=1,1
         self.slime_walk_pic = load_image('slimepic.png')

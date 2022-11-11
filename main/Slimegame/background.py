@@ -43,6 +43,7 @@ class BACKGROUND:
 def test_self():
     while not(get_events()==SDLK_DOWN):
       background=BACKGROUND()
+      print(type(background))
       background.draw()
       pico2d.update_canvas()
     # pico2d.clear_canvas()
