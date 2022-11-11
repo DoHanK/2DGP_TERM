@@ -35,9 +35,12 @@ def exit():
 def update():
     for game_object in game_world.all_objects():
         game_object.update()
-        if collide(slime,background):
+        if collide(slime,background,'g'):
+            slime.handle_collision(background,'g')
             print("collision")
-
+        if collide(slime,background,'crush'):
+            slime.handle_collision(background,'slime:background')
+            print("crush")
 
 def draw_world():
    for game_object in game_world.all_objects():
@@ -55,12 +58,14 @@ def pause():
 def resume():
     pass
 
-def collide(a,b):
+def collide(a,b,c):
     # print(type(b))
-    if type(b)==type(BACKGROUND()):
-        left_a, bottom_a,right_a,top_a=a.get_bb()
+    if type(b)==type(BACKGROUND()):  #background 전체에 대한 충돌 처리
+        left_a, bottom_a, right_a, top_a = a.get_bb()
+
+
         for y in range(0,b.raw):
-            for x in range(0,b.colum):
+             for x in range(0,b.colum):
                 if b.grid[y][x]==1:
                      left_b, bottom_b, right_b, top_b = b.get_bb(x,y)
                      if left_a > right_b: continue
@@ -69,7 +74,7 @@ def collide(a,b):
                      if bottom_a > top_b: continue
                      else:return True
         return False
-    else:
+    else:  #기본 object와의 충돌 처리
           left_a, bottom_a, right_a, top_a = a.get_bb()
           left_b,bottom_b,right_b,top_b=b.get_bb()
           if left_a> right_b: return False

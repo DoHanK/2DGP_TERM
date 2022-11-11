@@ -220,7 +220,7 @@ key_event_table = {
     (SDL_KEYDOWN, SDLK_LEFT): LD,
     (SDL_KEYUP, SDLK_RIGHT): RU,
     (SDL_KEYUP, SDLK_LEFT): LU,
-    (SDL_KEYDOWN,SDLK_SPACE):JD
+    (SDL_KEYDOWN,SDLK_UP):JD
 }
 
 #  frame y
@@ -239,16 +239,19 @@ class IDLE:
     @staticmethod
     def enter(self, event):
         print('ENTER IDLE')
-        self.face_dir=self.dir
         self.dir=0
         self.frame_x = 0
-
+        if event == JD:
+            if self.jump_flag == 0:
+                self.jumping()
+                self.jumping_update()
     @staticmethod
     def exit(self,event):
         print('EXIT IDLE')
 
     @staticmethod
     def do(self):
+        self.jumping_update()
         pass
 
 
@@ -273,14 +276,20 @@ class RUN:
             self.dir -= 1
         elif event == LU:
             self.dir += 1
-
+        self.face_dir = self.dir
+        if event == JD:
+            if self.jump_flag == 0:
+                self.jumping()
+                self.jumping_update()
     def exit(self,event):
         print('EXIT RUN')
+        self.face_dir=self.dir
 
 
 
     def do(self):
-        
+
+        self.jumping_update()
         self.frame_x =(self.frame_x + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 13
         self.x += self.dir*RUN_SPEED_PPS*game_framework.frame_time
         self.x = clamp(0, self.x, 800)
@@ -293,8 +302,8 @@ class RUN:
 
 
 next_state = {
-    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN},
-    RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE},
+    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN,JD:IDLE},
+    RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, JD:RUN},
 }
 
 
@@ -324,11 +333,11 @@ class SLIME:
         self.cur_state.enter(self,None)
 
         self.hp=100
-        self.jump_height = 16
-        self.jumping=0
+        self.jump_height = 8
+        self.jump_flag=0
         self.flying=0
         self.j_velocity=self.jump_height
-        self.j_gravity=2
+        self.j_gravity=1
 
 
     def update(self):
@@ -360,4 +369,36 @@ class SLIME:
             self.add_event(key_event)
 
     def  get_bb(self):
-        return self.x-self.hp/2+10,    self.y-self.hp/2 +15,     self.x+self.hp/2-10,     self.y+self.hp/2-15
+        return self.x-self.hp/2+25,    self.y-self.hp/2 +15,     self.x+self.hp/2-25,     self.y+self.hp/2-15
+    def handle_collision(self,other,massage):
+        #점프에 대한 충돌 처리
+        if massage=='slime:background':
+                self.x -= self.face_dir * RUN_SPEED_PPS * game_framework.frame_time
+        elif massage=='g':
+            if self.jump_flag==1:
+                 self.y -= self.j_velocity * RUN_SPEED_PPS * game_framework.frame_time
+                 self.j_velocity=0
+                 self.jump_flag=0
+            elif self.jump_flag==0:
+                 self.y +=self.j_gravity*RUN_SPEED_PPS*game_framework.frame_time
+
+
+
+        pass
+
+
+    def jumping(self):
+        self.jump_flag=1
+        self.j_velocity = self.jump_height
+
+        pass
+    def jumping_update(self):
+        if self.jump_flag==1:
+
+            self.y+=self.j_velocity*RUN_SPEED_PPS*game_framework.frame_time
+            self.j_velocity-=self.j_gravity
+        elif self.jump_flag==0:
+            self.y-=self.j_gravity*RUN_SPEED_PPS*game_framework.frame_time
+
+
+        pass
