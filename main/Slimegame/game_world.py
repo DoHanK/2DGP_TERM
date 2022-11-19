@@ -9,18 +9,13 @@ def add_objecccts(o,depth):
     objects[depth]+=o
 
 def remove_object(o):
-    for layer in objects.copy( ) :
+    for layer in objects :
         try:
              layer.remove(o)
-             print("충돌처리전")
              remove_collision_object(o)
-             print("충돌처리후")
              del o
-             print("진짜 삭제")
              return
-
         except:
-            print(" 뭐가 문제야")
             pass
     raise ValueError('Trying destroy non existing object')
 
@@ -44,12 +39,12 @@ def add_collision_pairs(a,b,group):
         print('Add new group',group)
         collision_group[group] =[[ ],[ ]]
 
-    if a:
+    if b:
         if type(b) is list:
             collision_group[group][1]  +=b
         else:
             collision_group[group][1].append(b)
-    if b:
+    if a:
         if type(a) is list:
             collision_group[group][0] +=a
         else:

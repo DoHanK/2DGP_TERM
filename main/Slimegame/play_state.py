@@ -46,7 +46,6 @@ def enter():
     game_world.add_collision_pairs(slime, background, 'crush')
     game_world.add_collision_pairs(slime, item, 'eat')
     game_world.add_collision_pairs(slime,sunmonster, 'attacked')
-
 # 종료
 def exit():
   game_world.clear()
