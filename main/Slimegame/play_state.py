@@ -4,11 +4,16 @@ import game_world
 from slime import SLIME
 from background import BACKGROUND
 from bullet import BULLET
+from hp_item import ITEM
+from sunmonster import SUNMONSTER
 width=800
 height=600
 
+item=None
 slime=None
 background=None
+sunmonster=None
+bullets=[]
 def handle_events():
     events = get_events()
     for event in events:
@@ -22,14 +27,26 @@ def handle_events():
 
 # 초기화
 def enter():
-    global slime,background
+    global slime,background,item,sunmonster
+    item=ITEM()
+    sunmonster=SUNMONSTER()
     slime=SLIME()
     background=BACKGROUND()
+
     slime.background=background
-    game_world.add_object(background, 1)
-    game_world.add_object(slime,2)
+    slime.bullets=bullets
+    slime.monster=sunmonster
+    game_world.add_object(sunmonster, 1)
+    game_world.add_object(item, 1)
+    game_world.add_object(background, 0)
+    game_world.add_object(slime,1)
+
+
     game_world.add_collision_pairs(slime, background, 'g')
     game_world.add_collision_pairs(slime, background, 'crush')
+    game_world.add_collision_pairs(slime, item, 'eat')
+    game_world.add_collision_pairs(slime,sunmonster, 'attacked')
+
 # 종료
 def exit():
   game_world.clear()
@@ -58,7 +75,7 @@ def pause():
 def resume():
     pass
 
-def collide(a,b,c):
+def collide(a,b,group):
     # print(type(b))
     if type(b)==type(BACKGROUND()):  #background 전체에 대한 충돌 처리
         left_a, bottom_a, right_a, top_a = a.get_bb()
@@ -73,11 +90,13 @@ def collide(a,b,c):
                      if top_a < bottom_b: continue
                      if bottom_a > top_b: continue
                      else:return True
+                else:continue
         return False
     else:  #기본 object와의 충돌 처리
           left_a, bottom_a, right_a, top_a = a.get_bb()
           left_b,bottom_b,right_b,top_b=b.get_bb()
           if left_a> right_b: return False
+          if right_a<left_b: return False
           if top_a<bottom_b:return False
           if bottom_a>top_b:return False
           return True

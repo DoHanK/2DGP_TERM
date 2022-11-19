@@ -1,20 +1,29 @@
+
 objects=[[],[],[]]
 collision_group=dict()
+
 def add_object(o,depth):
     objects[depth].append(o)
 
-def add_objecccts(ol,depth):
-    objects[depth]+=ol
+def add_objecccts(o,depth):
+    objects[depth]+=o
 
 def remove_object(o):
-    for layer in objects.copy():
-        if o in layer:
-            layer.remove(o)
-            remove_collision_object(o)
-            del o
-            return
+    for layer in objects.copy( ) :
+        try:
+             layer.remove(o)
+             print("충돌처리전")
+             remove_collision_object(o)
+             print("충돌처리후")
+             del o
+             print("진짜 삭제")
+             return
 
+        except:
+            print(" 뭐가 문제야")
+            pass
     raise ValueError('Trying destroy non existing object')
+
 
 
 def all_objects():
@@ -34,6 +43,7 @@ def add_collision_pairs(a,b,group):
     if group not in collision_group:
         print('Add new group',group)
         collision_group[group] =[[ ],[ ]]
+
     if a:
         if type(b) is list:
             collision_group[group][1]  +=b
@@ -53,12 +63,8 @@ def all_collision_pairs():
 
 
 def remove_collision_object(o):
-    for pairs in collision_group.values():
-        if o in pairs[0]:
-            print("delete bullet0")
-            pairs[0].remove(o)
-            break
-        if o in pairs[1]:
-            print("delete bullet1")
-            pairs[1].remove(o)
-            break
+         for pairs in collision_group.values():
+             if o in pairs[0]:
+                    pairs[0].remove(o)
+             if o in pairs[1]:
+                     pairs[1].remove(o)

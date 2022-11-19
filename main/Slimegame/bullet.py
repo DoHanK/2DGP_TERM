@@ -26,10 +26,12 @@ class BULLET:
             game_world.remove_object(self)
 
     def handle_collision(self, other, massage):
-        if massage=='b':
-            print("crush bullet")
+        if massage == 'b':
+            print("massage backgorund")
             game_world.remove_object(self)
-
+        if massage =='attack':
+            print("massage monster")
+            game_world.remove_object(self)
         pass
     def get_bb(self):
         return self.pos_x -15, self.pos_y-7.5 , self.pos_x+15 ,  self.pos_y+7.5

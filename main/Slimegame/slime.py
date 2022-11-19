@@ -51,11 +51,17 @@ class IDLE:
 
     @staticmethod
     def draw(self):
-
-        if self.face_dir > 0:
-            self.slime_walk_pic.clip_draw(self.frame_x * 50, 6*35, 50, 35, self.x, self.y,self.hp,self.hp)
+        if self.attacked_delay>1:
+            if self.face_dir > 0:
+                  self.slime_walk_pic.clip_draw(self.frame_x * 50, 6*35, 50, 35, self.x, self.y,self.hp,self.hp)
+            else:
+                  self.slime_walk_pic.clip_draw(self.frame_x * 50, 7*35, 50, 35, self.x, self.y,self.hp,self.hp)
         else:
-            self.slime_walk_pic.clip_draw(self.frame_x * 50, 7*35, 50, 35, self.x, self.y,self.hp,self.hp)
+            if self.attacked_draw%2==0:
+              if self.face_dir > 0:
+                  self.slime_walk_pic.clip_draw(self.frame_x * 50, 6 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
+              else:
+                 self.slime_walk_pic.clip_draw(self.frame_x * 50, 7 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
         draw_rectangle(*self.get_bb())
 
 class RUN:
@@ -88,10 +94,17 @@ class RUN:
         self.x += self.dir*RUN_SPEED_PPS*game_framework.frame_time
         self.x = clamp(0, self.x, 800)
     def draw(self):
-        if self.dir > 0:
-            self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 6 * 35, 50, 35, self.x, self.y,self.hp,self.hp)
+        if self.attacked_delay > 1:
+            if self.face_dir > 0:
+                self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 6 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
+            else:
+                self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 7 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
         else:
-            self.slime_walk_pic.clip_draw(int(self.frame_x)* 50, 7 * 35, 50, 35, self.x, self.y,self.hp,self.hp)
+            if self.attacked_draw % 2 == 0:
+                if self.face_dir > 0:
+                    self.slime_walk_pic.clip_draw(int(self.frame_x)* 50, 6 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
+                else:
+                    self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 7 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
         draw_rectangle(*self.get_bb())
 
 
@@ -116,7 +129,7 @@ FRAMES_PER_ACTION = 8
 class SLIME:
     slime_walk_pic= None
     def __init__(self):
-        self.x,self.y=40,400
+        self.x,self.y=50,100
         self.frame_x=0
         self.dir, self.face_dir=1,1
         if SLIME.slime_walk_pic==None:
@@ -130,11 +143,14 @@ class SLIME:
         self.jump_height = 6.5
         self.jump_flag=1
         self.flying=0
-        self.j_velocity=self.jump_height
+        self.j_velocity=0
         self.j_gravity=0.15
-
-
+        self.attacked_delay=10
+        self.attacked_draw=0
+        self.monster=None
     def update(self):
+        self.attacked_delay+=game_framework.frame_time
+        self.attacked_draw +=1
         self.cur_state.do(self)
 
         if self.event_que:
@@ -174,8 +190,13 @@ class SLIME:
                  self.jump_flag=0
             elif self.jump_flag==0:
                  self.y +=RUN_SPEED_PPS*game_framework.frame_time
-
-
+        if massage =='eat':
+                self.hp+=200
+        if massage =='attacked':
+            if self.attacked_delay>1:
+                self.hp -=10
+                self.attacked_delay=0
+                self.attacked_draw =0
 
         pass
 
@@ -198,3 +219,4 @@ class SLIME:
         bullet=BULLET(self.x,self.y,self.face_dir)
         game_world.add_object(bullet,1)
         game_world.add_collision_pairs(bullet, self.background ,'b')
+        game_world.add_collision_pairs(bullet, self.monster, 'attack')
