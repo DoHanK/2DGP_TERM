@@ -13,7 +13,8 @@ item=None
 slime=None
 background=None
 sunmonster=None
-bullets=[]
+bullets=None
+
 def handle_events():
     events = get_events()
     for event in events:
@@ -27,19 +28,26 @@ def handle_events():
 
 # 초기화
 def enter():
-    global slime,background,item,sunmonster
+    global slime,background,item,sunmonster,bullets
     item=ITEM()
     sunmonster=SUNMONSTER()
     slime=SLIME()
     background=BACKGROUND()
+    bullets=[BULLET() for x in range(6)]
 
     slime.background=background
     slime.bullets=bullets
     slime.monster=sunmonster
+
     game_world.add_object(sunmonster, 1)
     game_world.add_object(item, 1)
     game_world.add_object(background, 0)
     game_world.add_object(slime,1)
+
+    for x in bullets:
+        game_world.add_object(x, 1)
+        game_world.add_collision_pairs(x, sunmonster, 'attack')
+        game_world.add_collision_pairs(x, background, 'b')
 
 
     game_world.add_collision_pairs(slime, background, 'g')
@@ -76,29 +84,58 @@ def resume():
 
 def collide(a,b,group):
     # print(type(b))
-    if type(b)==type(BACKGROUND()):  #background 전체에 대한 충돌 처리
-        left_a, bottom_a, right_a, top_a = a.get_bb()
+    if type(a)==type(BULLET()):
+        if a.ableflag == 1:
+            if type(b)==type(BACKGROUND()):  #background 전체에 대한 충돌 처리
+                left_a, bottom_a, right_a, top_a = a.get_bb()
+                for y in range(0,b.raw):
+                    for x in range(0,b.colum):
+                        if b.grid[y][x]==1:
+                            left_b, bottom_b, right_b, top_b = b.get_bb(x,y)
+                            if left_a > right_b: continue
+                            if right_a<left_b:continue
+                            if top_a < bottom_b: continue
+                            if bottom_a > top_b: continue
+                            else:return True
+                        else:continue
+                return False
+            else:  #기본 object와의 충돌 처리
+                if b.ableflag==1:
+                    print("충돌 확인")
+                    left_a, bottom_a, right_a, top_a = a.get_bb()
+                    left_b,bottom_b,right_b,top_b=b.get_bb()
+                    if left_a> right_b: return False
+                    if right_a<left_b: return False
+                    if top_a<bottom_b:return False
+                    if bottom_a>top_b:return False
+                    return True
+        else:
+            return
+    else:
+        if type(b)==type(BACKGROUND()):  #background 전체에 대한 충돌 처리
+            left_a, bottom_a, right_a, top_a = a.get_bb()
 
 
-        for y in range(0,b.raw):
-             for x in range(0,b.colum):
-                if b.grid[y][x]==1:
-                     left_b, bottom_b, right_b, top_b = b.get_bb(x,y)
-                     if left_a > right_b: continue
-                     if right_a<left_b:continue
-                     if top_a < bottom_b: continue
-                     if bottom_a > top_b: continue
-                     else:return True
-                else:continue
-        return False
-    else:  #기본 object와의 충돌 처리
-          left_a, bottom_a, right_a, top_a = a.get_bb()
-          left_b,bottom_b,right_b,top_b=b.get_bb()
-          if left_a> right_b: return False
-          if right_a<left_b: return False
-          if top_a<bottom_b:return False
-          if bottom_a>top_b:return False
-          return True
+            for y in range(0,b.raw):
+                for x in range(0,b.colum):
+                    if b.grid[y][x]==1:
+                        left_b, bottom_b, right_b, top_b = b.get_bb(x,y)
+                        if left_a > right_b: continue
+                        if right_a<left_b:continue
+                        if top_a < bottom_b: continue
+                        if bottom_a > top_b: continue
+                        else:return True
+                    else:continue
+            return False
+        else:  #기본 object와의 충돌 처리
+            left_a, bottom_a, right_a, top_a = a.get_bb()
+            left_b,bottom_b,right_b,top_b=b.get_bb()
+            if left_a> right_b: return False
+            if right_a<left_b: return False
+            if top_a<bottom_b:return False
+            if bottom_a>top_b:return False
+            return True
+
 
 
 
