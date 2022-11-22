@@ -26,7 +26,7 @@ def handle_events():
 # 초기화
 def enter():
     sever.monster = [SUNMONSTER()]
-    sever.items = ITEM(270,80)
+    sever.items = ITEM(270,95)
     sever.background = BACKGROUND()
     sever.slime = SLIME()
     sever.door=DOOR()

@@ -199,6 +199,7 @@ class SLIME:
                  self.y +=RUN_SPEED_PPS*game_framework.frame_time
         if massage =='eat':
                 self.hp+=50
+                self.y+=20
         if massage =='attacked':
             if self.attacked_delay>1:
                 self.hp -=10

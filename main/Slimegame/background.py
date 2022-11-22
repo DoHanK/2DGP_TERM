@@ -17,7 +17,7 @@ class BACKGROUND:
         self.colum=32
         self.raw=12
         #앞가 위치 뒤에가 크기
-        self.tree_pos=[ (random.randint(0,1),random.randint(0,20)) for x in range(10)]
+        self.tree_pos=[ (random.randint(0,1),random.randint(0,500)) for x in range(10)]
         self.prepos_x=0
         self.onegen=1
         #1은 잔디있는 땅
