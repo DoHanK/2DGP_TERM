@@ -5,7 +5,7 @@ collision_group=dict()
 def add_object(o,depth):
     objects[depth].append(o)
 
-def add_objecccts(o,depth):
+def add_objects(o,depth):
     objects[depth]+=o
 
 def remove_object(o):
@@ -37,17 +37,18 @@ def clear():
 def add_collision_pairs(a,b,group):
     if group not in collision_group:
         print('Add new group',group)
-        collision_group[group] =[  [ ] , [ ]]
-    if b:
-        if type(b) is list:
-            collision_group[group][1]  +=b
-        else:
-            collision_group[group][1].append(b)
+        collision_group[group] =[ [ ] , [ ]]
     if a:
-        if type(a) is list:
-            collision_group[group][0] +=a
-        else:
-            collision_group[group] [0] .append(a)
+            if type(a) is list:
+                collision_group[group][0] += a
+            else:
+                collision_group[group][0].append(a)
+    if b:
+            if type(b) is list:
+                collision_group[group][1]  +=b
+            else:
+                collision_group[group][1].append(b)
+
 
 
 def all_collision_pairs():
@@ -61,5 +62,5 @@ def remove_collision_object(o):
          for pairs in collision_group.values():
              if o in pairs[0]:
                     pairs[0].remove(o)
-             if o in pairs[1]:
+             elif o in pairs[1]:
                     pairs[1].remove(o)

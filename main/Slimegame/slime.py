@@ -2,6 +2,7 @@ from pico2d import *
 import game_world
 import game_framework
 from bullet import BULLET
+import sever
 '''==================================함수 정의============================='''
 RD, LD, RU, LU,JD,SPACE= range(6)
 event_name=['RD','LD','RU','LU','JD','SPACE']
@@ -30,7 +31,7 @@ key_event_table = {
 class IDLE:
     @staticmethod
     def enter(self, event):
-        print('ENTER IDLE')
+
         self.dir=0
         self.frame_x = 0
         if event == JD:
@@ -39,7 +40,7 @@ class IDLE:
                 self.jumping_update()
     @staticmethod
     def exit(self,event):
-        print('EXIT IDLE')
+
         if event == SPACE:
             self.shoot_bullet()
     @staticmethod
@@ -66,7 +67,7 @@ class IDLE:
 
 class RUN:
     def enter(self, event):
-        print('ENTER RUN')
+
         if event == RD:
             self.dir += 1
         elif event == LD:
@@ -81,7 +82,7 @@ class RUN:
                 self.jumping()
                 self.jumping_update()
     def exit(self,event):
-        print('EXIT RUN')
+
         self.face_dir=self.dir
         if event == SPACE:
             self.shoot_bullet()
@@ -222,11 +223,11 @@ class SLIME:
     def shoot_bullet(self):
         if self.attack_delay<0:
             self.hp -=1
-            for x in self.bullets:
-                if x.ableflag==0:
-                    x.pos_y = self.y
-                    x.pos_x = self.x
-                    x.state = self.face_dir
-                    x.ableflag=1
-                    self.attack_delay=0.2
-                    return
+            bullets=BULLET( self.x ,self.y ,self.face_dir )
+
+            game_world.add_object(bullets,1)
+
+            game_world.add_collision_pairs(bullets, None, "bullet::background")
+            game_world.add_collision_pairs(bullets, None, "bullet::monster")
+            self.attack_delay=0.2
+            # print(game_world.collision_group)
