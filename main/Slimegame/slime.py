@@ -150,11 +150,11 @@ class SLIME:
         self.attacked_draw=0
         self.monster=None
         self.bullets=[]
-        self.attack_delay=0.2
-
+        self.prepos_x=0
 
     def update(self):
-        self.attack_delay -= game_framework.frame_time
+        sever.camera_x+=self.x-self.prepos_x
+        self.prepos_x=self.x
         self.attacked_delay+=game_framework.frame_time
         self.attacked_draw +=1
         self.cur_state.do(self)
@@ -221,7 +221,6 @@ class SLIME:
             self.y-=RUN_SPEED_PPS*game_framework.frame_time
 
     def shoot_bullet(self):
-        if self.attack_delay<0:
             self.hp -=1
             bullets=BULLET( self.x ,self.y ,self.face_dir )
 
@@ -229,5 +228,5 @@ class SLIME:
 
             game_world.add_collision_pairs(bullets, None, "bullet::background")
             game_world.add_collision_pairs(bullets, None, "bullet::monster")
-            self.attack_delay=0.2
+
             # print(game_world.collision_group)

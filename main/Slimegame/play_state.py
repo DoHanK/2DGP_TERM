@@ -77,7 +77,7 @@ def collide(a,b,group):
                 left_a, bottom_a, right_a, top_a = a.get_bb()
                 for y in range(0,b.raw):
                     for x in range(0,b.colum):
-                        if b.grid[y][x]==1:
+                        if b.grid[y][x]==1 or b.grid[y][x]==2:
                             left_b, bottom_b, right_b, top_b = b.get_bb(x,y)
                             if left_a > right_b: continue
                             if right_a<left_b:continue
