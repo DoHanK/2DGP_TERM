@@ -6,7 +6,7 @@ from background import BACKGROUND
 from hp_item import ITEM
 from sunmonster import SUNMONSTER
 import sever
-
+from door import DOOR
 width=800
 height=600
 
@@ -26,16 +26,17 @@ def handle_events():
 # 초기화
 def enter():
     sever.monster = [SUNMONSTER()]
-    sever.items = ITEM()
+    sever.items = ITEM(270,80)
     sever.background = BACKGROUND()
     sever.slime = SLIME()
-
+    sever.door=DOOR()
     game_world.add_objects(sever.monster, 1)
     game_world.add_object(sever.items, 1)
     game_world.add_object(sever.background, 0)
     game_world.add_object(sever.slime,1)
+    game_world.add_object(sever.door,0)
 
-
+    game_world.add_collision_pairs(sever.slime,sever.door,"slime::door" )
     game_world.add_collision_pairs(sever.slime, sever.background, 'g')
     game_world.add_collision_pairs(sever.slime, sever.background, 'crush')
     game_world.add_collision_pairs(sever.slime, sever.items, 'eat')

@@ -5,16 +5,16 @@ import sever
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 8
+FRAMES_PER_ACTION = 1
 
 class ITEM:
     image=None
-    def __init__(self):
+    def __init__(self,x,y):
         if ITEM.image==None:
             ITEM.image=load_image("item.png")
 
-        self.x=300
-        self.y=300
+        self.x=x
+        self.y=y
         self.frame_x=0
         self.frame_y=0
 

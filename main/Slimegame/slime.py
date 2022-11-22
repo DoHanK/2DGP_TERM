@@ -155,6 +155,7 @@ class SLIME:
     def update(self):
         sever.camera_x+=self.x-self.prepos_x
         self.prepos_x=self.x
+
         self.attacked_delay+=game_framework.frame_time
         self.attacked_draw +=1
         self.cur_state.do(self)
@@ -197,7 +198,7 @@ class SLIME:
             elif self.jump_flag==0:
                  self.y +=RUN_SPEED_PPS*game_framework.frame_time
         if massage =='eat':
-                self.hp+=200
+                self.hp+=50
         if massage =='attacked':
             if self.attacked_delay>1:
                 self.hp -=10
@@ -221,7 +222,7 @@ class SLIME:
             self.y-=RUN_SPEED_PPS*game_framework.frame_time
 
     def shoot_bullet(self):
-            self.hp -=1
+            self.hp -=3
             bullets=BULLET( self.x ,self.y ,self.face_dir )
 
             game_world.add_object(bullets,1)
