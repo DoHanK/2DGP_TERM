@@ -1,12 +1,11 @@
 from pico2d import *
 import game_framework
 import game_world
-from slime import SLIME
 from background import BACKGROUND
 from hp_item import ITEM
 from sunmonster import SUNMONSTER
 import sever
-from door import DOOR
+
 import fail_stage
 
 
@@ -28,31 +27,30 @@ def handle_events():
 
 # 초기화
 def enter():
-    sever.monster = [SUNMONSTER()]
-    sever.items = ITEM(270,95)
-    sever.background = BACKGROUND(sever.grid[1])
-    sever.slime = SLIME()
-    sever.door=DOOR()
-    sever.waterslide=SLIDE()
+    # sever.monster = [SUNMONSTER()]
+    # sever.items = ITEM(270,95)
+    sever.background = BACKGROUND(sever.gird[1])
+    # sever.slime = SLIME()
+    # sever.door=DOOR()
 
 
-    game_world.add_objects(sever.monster, 1)
-    game_world.add_object(sever.items, 1)
+
+    # game_world.add_objects(sever.monster, 1)
+    # game_world.add_object(sever.items, 1)
     game_world.add_object(sever.background, 0)
     game_world.add_object(sever.slime,1)
-    game_world.add_object(sever.door,0)
-    game_world.add_object(sever.waterslide, 1)
-
-    game_world.add_collision_pairs(sever.slime, sever.waterslide, 'slime::slide')
+    # game_world.add_object(sever.door,0)
+    # game_world.add_object(sever.waterslide, 1)
 
 
-    game_world.add_collision_pairs(sever.slime,sever.door,"slime::door" )
+    # game_world.add_collision_pairs(sever.slime, sever.waterslide, 'slime::slide')
+    # game_world.add_collision_pairs(sever.slime,sever.door,"slime::door" )
+
     game_world.add_collision_pairs(sever.slime, sever.background, 'g')
     game_world.add_collision_pairs(sever.slime, sever.background, 'crush')
-    game_world.add_collision_pairs(sever.slime, sever.items, 'eat')
-    game_world.add_collision_pairs(sever.slime,sever.monster, 'attacked')
+
     game_world.add_collision_pairs(None, sever.background, "bullet::background")
-    game_world.add_collision_pairs(None, sever.monster, "bullet::monster")
+
 # 종료
 def exit():
   game_world.clear()

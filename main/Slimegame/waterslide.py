@@ -20,13 +20,13 @@ class SLIDE:
         self.frame_y=0
 
     def get_bb(self):
-        return self.x - 25-sever.camera_x, self.y -25, self.x + 25-sever.camera_x, self.y + 25
+        return self.x - 25-sever.camera_x, self.y -50, self.x + 25-sever.camera_x, self.y -51
 
     def update(self):
 
 
         self.frame_y=(self.frame_y +1 ) %10
-        print(self.frame_y)
+
     def draw(self):
         self.image.clip_draw(0,  50*self.frame_y+100, 60,  50,  self.x-sever.camera_x,  self.y, 80,  50)
         draw_rectangle(*self.get_bb())

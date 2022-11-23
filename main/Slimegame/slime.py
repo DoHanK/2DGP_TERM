@@ -3,7 +3,7 @@ import game_world
 import game_framework
 from bullet import BULLET
 import sever
-# import play_state2
+import play_state2
 '''==================================함수 정의============================='''
 RD, LD, RU, LU,JD,SPACE= range(6)
 event_name=['RD','LD','RU','LU','JD','SPACE']
@@ -131,7 +131,7 @@ FRAMES_PER_ACTION = 8
 class SLIME:
     slime_walk_pic= None
     def __init__(self):
-        self.x,self.y=50,100
+        self.x,self.y=60,150
         self.frame_x=0
         self.dir, self.face_dir=1,1
         if SLIME.slime_walk_pic==None:
@@ -147,11 +147,12 @@ class SLIME:
         self.flying=0
         self.j_velocity=0
         self.j_gravity=0.15
-        self.attacked_delay=10
+        self.attacked_delay=1
         self.attacked_draw=0
         self.monster=None
         self.bullets=[]
         self.prepos_x=0
+        self.world_pos=0
 
     def update(self):
         sever.camera_x+=self.x-self.prepos_x
@@ -208,7 +209,15 @@ class SLIME:
                 self.attacked_draw =0
         if massage == 'slime::slide':
             # 캐릭터 전위치와 전카메라 위치 담기
-            # game_framework.change_state(play_state2)
+            temp=sever.slime
+            sever.sever_init()
+            sever.slime=temp
+            game_world.clear()
+            sever.slime.x=60
+            sever.slime.y=600
+            sever.slime.world_pos=1
+            self.prepos_x=0
+            game_framework.push_state(play_state2)
             pass
 
 

@@ -27,6 +27,7 @@ def handle_events():
 
 # 초기화
 def enter():
+
     sever.monster = [SUNMONSTER()]
     sever.items = ITEM(270,95)
     sever.background = BACKGROUND(sever.gird[0])
@@ -40,7 +41,7 @@ def enter():
     game_world.add_object(sever.background, 0)
     game_world.add_object(sever.slime,1)
     game_world.add_object(sever.door,0)
-    game_world.add_object(sever.waterslide, 1)
+    game_world.add_object(sever.waterslide, 0)
 
     game_world.add_collision_pairs(sever.slime, sever.waterslide, 'slime::slide')
 

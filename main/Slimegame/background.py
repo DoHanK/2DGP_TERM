@@ -29,10 +29,11 @@ class BACKGROUND:
     def draw(self):
 
         # 하늘
-        self.sky_img.clip_composite_draw(0, 0,self.sky_img.w,self.sky_img.h,0 , '',400,300,800,600)
-        for x in range(10):
-            x1,y=self.tree_pos[x]
-            self.tree1_img.draw_to_origin(x*(160+x1)-sever.camera_x,40,200+y,200+y)
+        if sever.slime.world_pos==0:
+            self.sky_img.clip_composite_draw(0, 0,self.sky_img.w,self.sky_img.h,0 , '',400,300,800,600)
+            for x in range(10):
+                x1,y=self.tree_pos[x]
+                self.tree1_img.draw_to_origin(x*(160+x1)-sever.camera_x,40,200+y,200+y)
 
         for y in range(0,self.raw):
             for x in range(0,self.colum):
@@ -60,7 +61,7 @@ class BACKGROUND:
         return 50*x-sever.camera_x, 50*(11-y), 50*x+50-sever.camera_x,50*(11-y)+50
     def handle_collision(self,other,massage):
         #점프에 대한 충돌 처리
-       pass
+        pass
 
 
 
