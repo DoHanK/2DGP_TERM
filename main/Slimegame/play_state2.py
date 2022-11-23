@@ -8,7 +8,8 @@ from sunmonster import SUNMONSTER
 import sever
 from door import DOOR
 import fail_stage
-from waterslide import SLIDE
+
+
 width=800
 height=600
 
@@ -29,7 +30,7 @@ def handle_events():
 def enter():
     sever.monster = [SUNMONSTER()]
     sever.items = ITEM(270,95)
-    sever.background = BACKGROUND(sever.gird[0])
+    sever.background = BACKGROUND(sever.grid[1])
     sever.slime = SLIME()
     sever.door=DOOR()
     sever.waterslide=SLIDE()

@@ -3,6 +3,7 @@ import game_world
 import game_framework
 from bullet import BULLET
 import sever
+# import play_state2
 '''==================================함수 정의============================='''
 RD, LD, RU, LU,JD,SPACE= range(6)
 event_name=['RD','LD','RU','LU','JD','SPACE']
@@ -205,8 +206,10 @@ class SLIME:
                 self.hp -=10
                 self.attacked_delay=0
                 self.attacked_draw =0
-
-        pass
+        if massage == 'slime::slide':
+            # 캐릭터 전위치와 전카메라 위치 담기
+            # game_framework.change_state(play_state2)
+            pass
 
 
     def jumping(self):

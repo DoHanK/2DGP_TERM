@@ -4,14 +4,17 @@ from pico2d import*
 import sever
 
 class BACKGROUND:
-    flag=1
-    def __init__(self):
-        if BACKGROUND.flag:
-            self.tree1_img=load_image('tree.png')
-            self.tileset_img=load_image('tilesetgrass.png')
-            self.sky_img=load_image('sky.png')
-            self.bush_img=load_image("bush.png")
-            BACKGROUND.flag=0
+    tree1_img = None
+    tileset_img = None
+    sky_img = None
+    bush_img=None
+    def __init__(self,grid):
+        if BACKGROUND.sky_img is  None:
+            BACKGROUND.tree1_img=load_image('tree.png')
+            BACKGROUND.tileset_img=load_image('tilesetgrass.png')
+            BACKGROUND.sky_img=load_image('sky.png')
+            BACKGROUND.bush_img=load_image("bush.png")
+
         self.pic1pos=[5,5,86,27] #잔디있는거
         self.pic2pos=[5,5,86,16]
         self.colum=32
@@ -22,20 +25,7 @@ class BACKGROUND:
         self.onegen=1
         #1은 잔디있는 땅
         # self.ninoblock=[   [[0,1,0],[0,2,0],[1,2,1]], [[0,0,1],[0,1,0],[1,0,0]], [[1,1,1],[0,0,2],[0,0,2]], [[0,1,0],[1,0,1],[0,0,0]], [[1,1,1],[2,0,2],[2,2,2]], [[1,1,1],[0,0,2],[0,0,2]], [[1,1,1],[0,0,2],[0,0,2]]]
-        self.grid=[
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                   [0, 0, 1, 1, 0, 0, 0, 0, 1, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-                   [0, 0, 0, 0, 1, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                   [0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                   [0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                   ]
+        self.grid=grid
     def draw(self):
 
         # 하늘
