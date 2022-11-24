@@ -42,7 +42,6 @@ def enter():
     game_world.add_object(sever.slime,1)
     game_world.add_object(sever.door,0)
     game_world.add_object(sever.waterslide, 0)
-
     game_world.add_collision_pairs(sever.slime, sever.waterslide, 'slime::slide')
 
 
