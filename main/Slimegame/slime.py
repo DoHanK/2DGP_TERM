@@ -38,9 +38,10 @@ class IDLE:
         self.dir=0
         self.frame_x = 0
         if event == JD:
-            if self.jump_flag == 0:
+            if self.jump_flag is not 'jump':
                 self.jumping()
                 self.jumping_update()
+                self.jump_flag = 'jump'
 
     @staticmethod
     def exit(self,event):
@@ -90,9 +91,10 @@ class RUN:
         self.face_dir = self.dir
 
         if event == JD:
-            if self.jump_flag == 0:
+            if self.jump_flag is not 'jump':
                 self.jumping()
                 self.jumping_update()
+                self.jump_flag = 'jump'
 
     def exit(self,event):
 
@@ -162,16 +164,17 @@ class SLIME:
         self.cur_state.enter(self,None)
         self.hp = 100
         self.jump_height = 6.5
-        self.jump_flag = 1
+        self.jump_flag = 'nujump'
         self.flying = 0
         self.j_velocity = 0
-        self.j_gravity = 0.15
+        self.j_gravity = 0.10
         self.attacked_delay = 1
         self.attacked_draw = 0
         self.monster = None
         self.bullets = []
         self.prepos_x = 0
         self.world_pos = 'ground'
+        self.pre_j_velocity=0
 
     def update(self):
 
@@ -214,22 +217,19 @@ class SLIME:
 
     def handle_collision(self,other,massage):
         #점프에 대한 충돌 처리
-        if massage == 'crush':
+        if massage == 'slime::background':
             self.x -= self.face_dir * RUN_SPEED_PPS * game_framework.frame_time
-
+            pass
         elif massage == 'g':
+            self.j_velocity = 0
+            self.y -= self.pre_j_velocity * RUN_SPEED_PPS * game_framework.frame_time
+            self.jump_flag = 'unjump'
 
-            if self.jump_flag == 1:
-                 self.y -= self.j_velocity * RUN_SPEED_PPS * game_framework.frame_time
-                 self.jump_flag = 0
+        if massage == 'slime::item':
+            self.hp += 50
+            self.y += 20
 
-            elif self.jump_flag == 0:
-                 self.y += RUN_SPEED_PPS*game_framework.frame_time
-
-        if massage == 'eat':
-                self.hp += 50
-                self.y += 20
-        if massage == 'attacked':
+        if massage == 'slime::monster':
             if self.attacked_delay>1:
                 self.hp -= 10
                 self.attacked_delay = 0
@@ -247,17 +247,14 @@ class SLIME:
             game_framework.push_state(undergroundbackground)
 
     def jumping(self):
-        self.jump_flag = 1
         self.j_velocity = self.jump_height
 
     def jumping_update(self):
-
-        if self.jump_flag == 1:
             self.y += self.j_velocity * RUN_SPEED_PPS * game_framework.frame_time
+            self.pre_j_velocity = self.j_velocity
             self.j_velocity -= self.j_gravity
 
-        elif self.jump_flag==0:
-            self.y -= RUN_SPEED_PPS * game_framework.frame_time
+
 
     def shoot_bullet(self):
         self.hp -= 3
