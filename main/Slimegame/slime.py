@@ -3,8 +3,10 @@ import game_world
 import game_framework
 from bullet import BULLET
 import sever
-import play_state2
-'''==================================함수 정의============================='''
+import undergroundbackground
+import failstage
+
+
 RD, LD, RU, LU,JD,SPACE= range(6)
 event_name=['RD','LD','RU','LU','JD','SPACE']
 
@@ -39,72 +41,85 @@ class IDLE:
             if self.jump_flag == 0:
                 self.jumping()
                 self.jumping_update()
+
     @staticmethod
     def exit(self,event):
 
         if event == SPACE:
             self.shoot_bullet()
+
     @staticmethod
     def do(self):
         self.jumping_update()
-        pass
-
-
 
     @staticmethod
     def draw(self):
-        if self.attacked_delay>1:
+        if self.attacked_delay > 1:
             if self.face_dir > 0:
                   self.slime_walk_pic.clip_draw(self.frame_x * 50, 6*35, 50, 35, self.x, self.y,self.hp,self.hp)
+
             else:
                   self.slime_walk_pic.clip_draw(self.frame_x * 50, 7*35, 50, 35, self.x, self.y,self.hp,self.hp)
+
         else:
-            if self.attacked_draw%2==0:
+            if self.attacked_draw%2 == 0:
               if self.face_dir > 0:
                   self.slime_walk_pic.clip_draw(self.frame_x * 50, 6 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
+
               else:
                  self.slime_walk_pic.clip_draw(self.frame_x * 50, 7 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
+
         draw_rectangle(*self.get_bb())
+
 
 class RUN:
     def enter(self, event):
 
         if event == RD:
             self.dir += 1
+
         elif event == LD:
             self.dir -= 1
+
         elif event == RU:
             self.dir -= 1
+
         elif event == LU:
             self.dir += 1
+
         self.face_dir = self.dir
+
         if event == JD:
             if self.jump_flag == 0:
                 self.jumping()
                 self.jumping_update()
+
     def exit(self,event):
 
         self.face_dir=self.dir
         if event == SPACE:
             self.shoot_bullet()
 
-
     def do(self):
 
         self.jumping_update()
-        self.frame_x =(self.frame_x + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 13
+        self.frame_x = (self.frame_x + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 13
         self.x += self.dir*RUN_SPEED_PPS*game_framework.frame_time
         self.x = clamp(0, self.x, 800)
+
     def draw(self):
         if self.attacked_delay > 1:
             if self.face_dir > 0:
                 self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 6 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
+
             else:
                 self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 7 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
+
         else:
             if self.attacked_draw % 2 == 0:
                 if self.face_dir > 0:
                     self.slime_walk_pic.clip_draw(int(self.frame_x)* 50, 6 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
+
                 else:
                     self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 7 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
         draw_rectangle(*self.get_bb())
@@ -128,38 +143,45 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
+
 class SLIME:
+
     slime_walk_pic= None
+
     def __init__(self):
-        self.x,self.y=60,150
-        self.frame_x=0
-        self.dir, self.face_dir=1,1
-        if SLIME.slime_walk_pic==None:
-            SLIME.slime_walk_pic = load_image('./resoureimg/slimepic.png')
-            self.attack_effect_pic=load_image('./resoureimg/deadsprite.png')
-        self.background=None
-        self.event_que=[]
-        self.cur_state=IDLE
+        if SLIME.slime_walk_pic == None:
+            SLIME.slime_walk_pic = load_image('./resourceimg/slimepic.png')
+            self.attack_effect_pic=load_image('./resourceimg/deadsprite.png')
+
+        self.x , self.y = 60 , 150
+        self.frame_x = 0
+        self.dir , self.face_dir = 1 , 1
+        self.background = None
+        self.event_que = []
+        self.cur_state = IDLE
         self.cur_state.enter(self,None)
-        self.hp=100
+        self.hp = 100
         self.jump_height = 6.5
-        self.jump_flag=1
-        self.flying=0
-        self.j_velocity=0
-        self.j_gravity=0.15
-        self.attacked_delay=1
-        self.attacked_draw=0
-        self.monster=None
-        self.bullets=[]
-        self.prepos_x=0
-        self.world_pos=0
+        self.jump_flag = 1
+        self.flying = 0
+        self.j_velocity = 0
+        self.j_gravity = 0.15
+        self.attacked_delay = 1
+        self.attacked_draw = 0
+        self.monster = None
+        self.bullets = []
+        self.prepos_x = 0
+        self.world_pos = 'ground'
 
     def update(self):
-        sever.camera_x+=self.x-self.prepos_x
-        self.prepos_x=self.x
 
-        self.attacked_delay+=game_framework.frame_time
-        self.attacked_draw +=1
+        if self.hp<30:
+            game_framework.change_state(failstage)
+
+        sever.camera_x += self.x-self.prepos_x
+        self.prepos_x = self.x
+        self.attacked_delay += game_framework.frame_time
+        self.attacked_draw += 1
         self.cur_state.do(self)
 
         if self.event_que:
@@ -172,8 +194,8 @@ class SLIME:
                 print(f'ERROR: State {self.cur_state.__name__} Event{event_name[event]}')
             self.cur_state.enter(self,event)
 
-
     def draw(self):
+
         self.cur_state.draw(self)
         debug_print('PPPP')
         debug_print(f'Face Dir: {self.face_dir},dir:{self.dir}')
@@ -181,67 +203,65 @@ class SLIME:
     def add_event(self,event):
         self.event_que.insert(0,event)
 
-
     def handle_event(self,event):
+
         if (event.type, event.key) in key_event_table:
             key_event = key_event_table[(event.type, event.key)]
             self.add_event(key_event)
 
-    def  get_bb(self):
+    def get_bb(self):
         return self.x-self.hp/2+220/800*self.hp,    self.y-self.hp/2 +100/800*self.hp,     self.x+self.hp/2-220/800*self.hp,     self.y+self.hp/2-100/800*self.hp
+
     def handle_collision(self,other,massage):
         #점프에 대한 충돌 처리
-        if massage=='crush':
-                self.x -= self.face_dir * RUN_SPEED_PPS * game_framework.frame_time
-        elif massage=='g':
-            if self.jump_flag==1:
-                 self.y -= self.j_velocity * RUN_SPEED_PPS * game_framework.frame_time
-                 self.jump_flag=0
-            elif self.jump_flag==0:
-                 self.y +=RUN_SPEED_PPS*game_framework.frame_time
+        if massage == 'crush':
+            self.x -= self.face_dir * RUN_SPEED_PPS * game_framework.frame_time
 
-        if massage =='eat':
-                self.hp+=50
-                self.y+=20
-        if massage =='attacked':
+        elif massage == 'g':
+
+            if self.jump_flag == 1:
+                 self.y -= self.j_velocity * RUN_SPEED_PPS * game_framework.frame_time
+                 self.jump_flag = 0
+
+            elif self.jump_flag == 0:
+                 self.y += RUN_SPEED_PPS*game_framework.frame_time
+
+        if massage == 'eat':
+                self.hp += 50
+                self.y += 20
+        if massage == 'attacked':
             if self.attacked_delay>1:
-                self.hp -=10
-                self.attacked_delay=0
-                self.attacked_draw =0
+                self.hp -= 10
+                self.attacked_delay = 0
+                self.attacked_draw = 0
         if massage == 'slime::slide':
             # 캐릭터 전위치와 전카메라 위치 담기
             temp=sever.slime
             sever.sever_init()
             sever.slime=temp
             game_world.clear()
-            sever.slime.x=60
-            sever.slime.y=600
-            sever.slime.world_pos=1
-            self.prepos_x=0
-            game_framework.push_state(play_state2)
-            pass
-
+            sever.slime.x = 60
+            sever.slime.y = 600
+            sever.slime.world_pos = 'underground'
+            self.prepos_x = 0
+            game_framework.push_state(undergroundbackground)
 
     def jumping(self):
-        self.jump_flag=1
+        self.jump_flag = 1
         self.j_velocity = self.jump_height
 
-        pass
     def jumping_update(self):
-        if self.jump_flag==1:
 
-            self.y+=self.j_velocity*RUN_SPEED_PPS*game_framework.frame_time
-            self.j_velocity-=self.j_gravity
+        if self.jump_flag == 1:
+            self.y += self.j_velocity * RUN_SPEED_PPS * game_framework.frame_time
+            self.j_velocity -= self.j_gravity
+
         elif self.jump_flag==0:
-            self.y-=RUN_SPEED_PPS*game_framework.frame_time
+            self.y -= RUN_SPEED_PPS * game_framework.frame_time
 
     def shoot_bullet(self):
-            self.hp -=3
-            bullets=BULLET( self.x ,self.y ,self.face_dir )
-
-            game_world.add_object(bullets,1)
-
-            game_world.add_collision_pairs(bullets, None, "bullet::background")
-            game_world.add_collision_pairs(bullets, None, "bullet::monster")
-
-            # print(game_world.collision_group)
+        self.hp -= 3
+        bullets = BULLET( self.x ,self.y ,self.face_dir, self.hp )
+        game_world.add_object(bullets,1)
+        game_world.add_collision_pairs(bullets, None, "bullet::background")
+        game_world.add_collision_pairs(bullets, None, "bullet::monster")

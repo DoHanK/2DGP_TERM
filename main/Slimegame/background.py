@@ -4,36 +4,44 @@ from pico2d import*
 import sever
 
 class BACKGROUND:
-    tree1_img = None
+    tree_img = None
     tileset_img = None
     sky_img = None
-    bush_img=None
+    bush_img = None
+    underground_img = None
     def __init__(self,grid):
-        if BACKGROUND.sky_img is  None:
-            BACKGROUND.tree1_img=load_image('./resoureimg/tree.png')
-            BACKGROUND.tileset_img=load_image('./resoureimg/tilesetgrass.png')
-            BACKGROUND.sky_img=load_image('./resoureimg/sky.png')
-            BACKGROUND.bush_img=load_image("./resoureimg/bush.png")
 
-        self.pic1pos=[5,5,86,27] #잔디있는거
-        self.pic2pos=[5,5,86,16]
-        self.colum=32
-        self.raw=12
-        #앞가 위치 뒤에가 크기
-        self.tree_pos=[ (random.randint(0,1),random.randint(0,500)) for x in range(10)]
-        self.prepos_x=0
-        self.onegen=1
+        if BACKGROUND.sky_img is  None:
+            BACKGROUND.underground_img = load_image('./resourceimg/underground.jpg')
+            BACKGROUND.tree_img = load_image('./resourceimg/tree.png')
+            BACKGROUND.tileset_img=load_image('./resourceimg/tilesetgrass.png')
+            BACKGROUND.sky_img=load_image('./resourceimg/sky.png')
+            BACKGROUND.bush_img=load_image("./resourceimg/bush.png")
+
+        self.pic1pos = [5,5,86,27] #잔디있는거
+        self.pic2pos = [5,5,86,16]
+        self.colum = 32
+        self.raw = 12
+        #앞변수 위치 뒤 변수 크기
+        self.tree_pos = [ (random.randint(0,1),random.randint(0,500)) for x in range(10)]
+        self.prepos_x = 0
+        self.onegen = 1
         #1은 잔디있는 땅
-        # self.ninoblock=[   [[0,1,0],[0,2,0],[1,2,1]], [[0,0,1],[0,1,0],[1,0,0]], [[1,1,1],[0,0,2],[0,0,2]], [[0,1,0],[1,0,1],[0,0,0]], [[1,1,1],[2,0,2],[2,2,2]], [[1,1,1],[0,0,2],[0,0,2]], [[1,1,1],[0,0,2],[0,0,2]]]
+
         self.grid=grid
+
     def draw(self):
 
         # 하늘
-        if sever.slime.world_pos==0:
+        if sever.slime.world_pos=='ground':
             self.sky_img.clip_composite_draw(0, 0,self.sky_img.w,self.sky_img.h,0 , '',400,300,800,600)
             for x in range(10):
                 x1,y=self.tree_pos[x]
-                self.tree1_img.draw_to_origin(x*(160+x1)-sever.camera_x,40,200+y,200+y)
+                self.tree_img.draw_to_origin(x*(160+x1)-sever.camera_x,40,200+y,200+y)
+
+        elif sever.slime.world_pos=='underground':
+            self.underground_img.clip_composite_draw(int(0+sever.camera_x),int(self.underground_img.h/2) ,int(self.underground_img.w/4),int(self.underground_img.h/4),0 , '',400,300,800,600)
+
 
         for y in range(0,self.raw):
             for x in range(0,self.colum):
@@ -45,37 +53,12 @@ class BACKGROUND:
                     draw_rectangle(*self.get_bb(x, y))
 
     def update(self):
-        # if self.onegen:
-        #     for y in range(0, self.raw):
-        #         for x in range(0, self.colum):
-        #             if random.randint(0,10)==0:
-        #                 num=random.randint(0,6)
-        #                 for y1 in range (0,3):
-        #                     for x1 in range(0,3):
-        #                         if x+3<32 and y+3<10:
-        #                             self.grid[y+y1][x+x1]=self.ninoblock[num][y1][x1]
-        #     self.onegen=0
-
         pass
+
     def get_bb(self,x,y):
-        return 50*x-sever.camera_x, 50*(11-y), 50*x+50-sever.camera_x,50*(11-y)+50
+        return 50*x - sever.camera_x , 50*(11 - y) , 50 * x + 50 - sever.camera_x ,50*(11 - y)+50
+
     def handle_collision(self,other,massage):
         #점프에 대한 충돌 처리
         pass
 
-
-
-
-
-
-def test_self():
-    while not(get_events()==SDLK_DOWN):
-      background=BACKGROUND()
-      print(type(background))
-      background.draw()
-      pico2d.update_canvas()
-    # pico2d.clear_canvas()
-
-
-if __name__ == '__main__':
-    test_self()
