@@ -11,10 +11,16 @@ FRAMES_PER_ACTION = 4
 image = None
 button=None
 drawflag=0
+import os
+
+path = "./resoureimg"
+file_list = os.listdir(path)
+
+print ("file_list: {}".format(file_list))
 def enter():
     global image,button
-    image = load_image('gametittle.png')
-    button=load_image('pressbutton.png')
+    image = load_image('./resoureimg/gametittle.png')
+    button = load_image('./resoureimg/pressbutton.png')
 
 
 def exit():

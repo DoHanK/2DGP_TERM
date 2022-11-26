@@ -10,7 +10,7 @@ class SUNMONSTER:
     sunpic=None
     def __init__(self):
         if SUNMONSTER.sunpic==None:
-            SUNMONSTER.sunpic=load_image("sunmonster.png")
+            SUNMONSTER.sunpic=load_image("./resoureimg/sunmonster.png")
         self.x=400
         self.y=250
         self.frame_x=5

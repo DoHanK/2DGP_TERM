@@ -11,7 +11,7 @@ class ITEM:
     image=None
     def __init__(self,x,y):
         if ITEM.image==None:
-            ITEM.image=load_image("item.png")
+            ITEM.image=load_image("./resoureimg/item.png")
 
         self.x=x
         self.y=y

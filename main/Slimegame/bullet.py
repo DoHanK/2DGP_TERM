@@ -12,7 +12,7 @@ class BULLET:
     bullet=None
     def __init__(self, x,y, dir):
         if BULLET.bullet==None:
-            BULLET.bullet=load_image("R_bullet.png")
+            BULLET.bullet=load_image("./resoureimg/R_bullet.png")
         self.pos_y=y
         self.pos_x=x
         self.state=dir

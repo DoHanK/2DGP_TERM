@@ -12,7 +12,7 @@ class SLIDE:
     image=None
     def __init__(self,):
         if SLIDE.image==None:
-            SLIDE.image=load_image("water_slide.png")
+            SLIDE.image=load_image("./resoureimg/water_slide.png")
 
         self.x=575
         self.y=25

@@ -10,10 +10,10 @@ class BACKGROUND:
     bush_img=None
     def __init__(self,grid):
         if BACKGROUND.sky_img is  None:
-            BACKGROUND.tree1_img=load_image('tree.png')
-            BACKGROUND.tileset_img=load_image('tilesetgrass.png')
-            BACKGROUND.sky_img=load_image('sky.png')
-            BACKGROUND.bush_img=load_image("bush.png")
+            BACKGROUND.tree1_img=load_image('./resoureimg/tree.png')
+            BACKGROUND.tileset_img=load_image('./resoureimg/tilesetgrass.png')
+            BACKGROUND.sky_img=load_image('./resoureimg/sky.png')
+            BACKGROUND.bush_img=load_image("./resoureimg/bush.png")
 
         self.pic1pos=[5,5,86,27] #잔디있는거
         self.pic2pos=[5,5,86,16]

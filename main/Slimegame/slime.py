@@ -135,8 +135,8 @@ class SLIME:
         self.frame_x=0
         self.dir, self.face_dir=1,1
         if SLIME.slime_walk_pic==None:
-            SLIME.slime_walk_pic = load_image('slimepic.png')
-            self.attack_effect_pic=load_image('deadsprite.png')
+            SLIME.slime_walk_pic = load_image('./resoureimg/slimepic.png')
+            self.attack_effect_pic=load_image('./resoureimg/deadsprite.png')
         self.background=None
         self.event_que=[]
         self.cur_state=IDLE
@@ -199,6 +199,7 @@ class SLIME:
                  self.jump_flag=0
             elif self.jump_flag==0:
                  self.y +=RUN_SPEED_PPS*game_framework.frame_time
+
         if massage =='eat':
                 self.hp+=50
                 self.y+=20

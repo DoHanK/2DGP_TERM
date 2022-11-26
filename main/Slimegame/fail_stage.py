@@ -14,8 +14,8 @@ button=None
 drawflag=0
 def enter():
     global image,button
-    image = load_image('fail_stage.png')
-    button=load_image('restart_button.png')
+    image = load_image('./resoureimg/fail_stage.png')
+    button=load_image('./resoureimg/restart_button.png')
 
 
 def exit():

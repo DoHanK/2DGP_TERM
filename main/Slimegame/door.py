@@ -11,7 +11,7 @@ class DOOR:
     image=None
     def __init__(self):
         if DOOR.image==None:
-            DOOR.image=load_image("watersprite.png")
+            DOOR.image=load_image("./resoureimg/watersprite.png")
 
         self.x=250
         self.y=500
