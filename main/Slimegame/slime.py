@@ -240,10 +240,11 @@ class SLIME:
             sever.sever_init()
             sever.slime=temp
             game_world.clear()
-            sever.slime.x = 60
+            sever.slime.x = 400
             sever.slime.y = 600
             sever.slime.world_pos = 'underground'
-            self.prepos_x = 0
+            self.prepos_x = 400
+            sever.camera_x = 400
             game_framework.push_state(undergroundbackground)
 
     def jumping(self):
@@ -257,7 +258,8 @@ class SLIME:
 
 
     def shoot_bullet(self):
-        self.hp -= 3
+
+        self.hp -= 2
         bullets = BULLET( self.x ,self.y ,self.face_dir, self.hp )
         game_world.add_object(bullets,1)
         game_world.add_collision_pairs(bullets, None, "bullet::background")
