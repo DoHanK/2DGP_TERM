@@ -2,7 +2,7 @@ from pico2d import *
 import game_world
 import game_framework
 from bullet import BULLET
-import sever
+import server
 import undergroundbackground
 import failstage
 
@@ -163,7 +163,7 @@ class SLIME:
         self.cur_state = IDLE
         self.cur_state.enter(self,None)
         self.hp = 100
-        self.jump_height = 6.5
+        self.jump_height = 5.5
         self.jump_flag = 'nujump'
         self.flying = 0
         self.j_velocity = 0
@@ -181,7 +181,7 @@ class SLIME:
         if self.hp<30:
             game_framework.change_state(failstage)
 
-        sever.camera_x += self.x-self.prepos_x
+        server.camera_x += self.x-self.prepos_x
         self.prepos_x = self.x
         self.attacked_delay += game_framework.frame_time
         self.attacked_draw += 1
@@ -236,15 +236,15 @@ class SLIME:
                 self.attacked_draw = 0
         if massage == 'slime::slide':
             # 캐릭터 전위치와 전카메라 위치 담기
-            temp=sever.slime
-            sever.sever_init()
-            sever.slime=temp
+            temp=server.slime
+            server.sever_init()
+            server.slime=temp
             game_world.clear()
-            sever.slime.x = 400
-            sever.slime.y = 600
-            sever.slime.world_pos = 'underground'
+            server.slime.x = 400
+            server.slime.y = 600
+            server.slime.world_pos = 'underground'
             self.prepos_x = 400
-            sever.camera_x = 400
+            server.camera_x = 400
             game_framework.push_state(undergroundbackground)
 
     def jumping(self):

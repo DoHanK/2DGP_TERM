@@ -1,7 +1,7 @@
 import random
 
 from pico2d import*
-import sever
+import server
 
 class BACKGROUND:
     tree_img = None
@@ -33,30 +33,30 @@ class BACKGROUND:
     def draw(self):
 
         # 하늘
-        if sever.slime.world_pos=='ground':
+        if server.slime.world_pos=='ground':
             self.sky_img.clip_composite_draw(0, 0,self.sky_img.w,self.sky_img.h,0 , '',400,300,800,600)
             for x in range(10):
                 x1,y=self.tree_pos[x]
-                self.tree_img.draw_to_origin(x*(160+x1)-sever.camera_x,40,200+y,200+y)
+                self.tree_img.draw_to_origin(x*(160+x1)-server.camera_x,40,200+y,200+y)
 
-        elif sever.slime.world_pos=='underground':
-            self.underground_img.clip_composite_draw(int(0+sever.camera_x),int(self.underground_img.h/2) ,int(self.underground_img.w/4),int(self.underground_img.h/4),0 , '',400,300,800,600)
+        elif server.slime.world_pos=='underground':
+            self.underground_img.clip_composite_draw(int(0+server.camera_x),int(self.underground_img.h/2) ,int(self.underground_img.w/4),int(self.underground_img.h/4),0 , '',400,300,800,600)
 
 
         for y in range(0,self.raw):
             for x in range(0,self.colum):
                 if(self.grid[y][x]==1 ):
-                    self.tileset_img.clip_composite_draw(self.pic1pos[0] ,self.pic1pos[1] ,self.pic1pos[2] ,self.pic1pos[3] ,0,' ',50*x+25 -sever.camera_x,50*(11-y)+25,50,50)
+                    self.tileset_img.clip_composite_draw(self.pic1pos[0] ,self.pic1pos[1] ,self.pic1pos[2] ,self.pic1pos[3] ,0,' ',50*x+25 -server.camera_x,50*(11-y)+25,50,50)
                     draw_rectangle(*self.get_bb(x,y) )
                 elif self.grid[y][x]==2 :
-                    self.tileset_img.clip_composite_draw(self.pic2pos[0], self.pic2pos[1], self.pic2pos[2], self.pic2pos[3], 0, ' ', 50 * x + 25 - sever.camera_x, 50 * (11 - y) + 25, 50, 50)
+                    self.tileset_img.clip_composite_draw(self.pic2pos[0], self.pic2pos[1], self.pic2pos[2], self.pic2pos[3], 0, ' ', 50 * x + 25 - server.camera_x, 50 * (11 - y) + 25, 50, 50)
                     draw_rectangle(*self.get_bb(x, y))
 
     def update(self):
         pass
 
     def get_bb(self,x,y):
-        return 50*x - sever.camera_x , 50*(11 - y) , 50 * x + 50 - sever.camera_x ,50*(11 - y)+50
+        return 50*x - server.camera_x , 50*(11 - y) , 50 * x + 50 - server.camera_x ,50*(11 - y)+50
 
     def handle_collision(self,other,massage):
         #점프에 대한 충돌 처리

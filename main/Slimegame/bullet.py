@@ -1,7 +1,7 @@
 from pico2d import *
 import game_world
 import game_framework
-import sever
+import server
 
 PIXEL_PER_METER = (10.0 / 0.3) # 10 pixel 30 cm
 RUN_SPEED_KMPH = 100.0 # Km / Hour
@@ -35,7 +35,7 @@ class BULLET:
 
 
     def get_bb(self):
-        return self.pos_x - int(sever.slime.hp/4)/2, self.pos_y - int(self.size/6)/2, self.pos_x + int(self.size/4)/2 ,  self.pos_y + int(self.size/810)/2
+        return self.pos_x - int(self.size/4)/2, self.pos_y - int(self.size/6)/2, self.pos_x + int(self.size/4)/2 ,  self.pos_y + int(self.size/810)/2
 
     def draw(self):
             if self.dir == 1:
