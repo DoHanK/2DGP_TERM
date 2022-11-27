@@ -7,16 +7,18 @@ import undergroundbackground
 import failstage
 from  batmonster import BATMONSTER
 
-RD, LD, RU, LU,JD,SPACE= range(6)
-event_name=['RD','LD','RU','LU','JD','SPACE']
+RD, LD, RU, LU , JD , SPACE , CTRL_D , CTRL_U = range(8)
+event_name=['RD', 'LD' , 'RU' , 'LU' , 'JD' , 'SPACE' , 'CTRL_D' , 'CTRL_U' ]
 
 key_event_table = {
     (SDL_KEYDOWN, SDLK_RIGHT): RD,
     (SDL_KEYDOWN, SDLK_LEFT): LD,
     (SDL_KEYUP, SDLK_RIGHT): RU,
     (SDL_KEYUP, SDLK_LEFT): LU,
-    (SDL_KEYDOWN,SDLK_UP):JD,
-    (SDL_KEYDOWN,SDLK_SPACE):SPACE
+    (SDL_KEYDOWN,SDLK_UP): JD,
+    (SDL_KEYDOWN,SDLK_SPACE): SPACE,
+    (SDL_KEYDOWN,SDLK_LCTRL): CTRL_D,
+    (SDL_KEYUP,SDLK_LCTRL): CTRL_U
 }
 
 #  frame y
@@ -42,6 +44,11 @@ class IDLE:
                 self.jumping()
                 self.jumping_update()
                 self.jump_flag = 'jump'
+        if event is CTRL_D:
+            self.flying = 'flying'
+        if event is CTRL_U:
+            self.flying = 'unflying'
+            self.j_velocity = 0
 
     @staticmethod
     def exit(self,event):
@@ -55,6 +62,9 @@ class IDLE:
 
     @staticmethod
     def draw(self):
+        if self.flying is 'flying':
+            self.slime_fly_pic.clip_draw(157,7,145,143,self.x,self.y,self.hp,self.hp)
+
         if self.attacked_delay > 1:
             if self.face_dir > 0:
                   self.slime_walk_pic.clip_draw(self.frame_x * 50, 6*35, 50, 35, self.x, self.y,self.hp,self.hp)
@@ -70,6 +80,8 @@ class IDLE:
               else:
                  self.slime_walk_pic.clip_draw(self.frame_x * 50, 7 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
 
+        if self.flying is 'flying': #pic비눗방울 디테일
+            self.slime_fly_pic.clip_draw(8,8,143,140,self.x,self.y,self.hp,self.hp)
         draw_rectangle(*self.get_bb())
 
 
@@ -95,6 +107,11 @@ class RUN:
                 self.jumping()
                 self.jumping_update()
                 self.jump_flag = 'jump'
+        if event is CTRL_D:
+            self.flying = 'flying'
+        if event is CTRL_U:
+            self.flying = 'unflying'
+            self.j_velocity = 0
 
     def exit(self,event):
 
@@ -110,6 +127,9 @@ class RUN:
         self.x = clamp(0, self.x, 800)
 
     def draw(self):
+        if self.flying is 'flying':
+            self.slime_fly_pic.clip_draw(157,7,145,143,self.x,self.y,self.hp,self.hp)
+
         if self.attacked_delay > 1:
             if self.face_dir > 0:
                 self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 6 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
@@ -124,12 +144,15 @@ class RUN:
 
                 else:
                     self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 7 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
+
+        if self.flying is 'flying': #pic비눗방울 디테일
+            self.slime_fly_pic.clip_draw(8,8,143,140,self.x,self.y,self.hp,self.hp)
         draw_rectangle(*self.get_bb())
 
 
 next_state = {
-    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN,JD:IDLE,SPACE:IDLE},
-    RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, JD:RUN,SPACE:RUN},
+    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN,JD:IDLE,SPACE:IDLE,CTRL_U:IDLE, CTRL_D:IDLE},
+    RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, JD:RUN,SPACE:RUN,CTRL_U:RUN, CTRL_D:RUN},
 }
 
 
@@ -148,12 +171,14 @@ FRAMES_PER_ACTION = 8
 
 class SLIME:
 
-    slime_walk_pic= None
-
+    slime_walk_pic = None
+    attack_effect_pic = None
+    slime_fly_pic= None
     def __init__(self):
         if SLIME.slime_walk_pic == None:
             SLIME.slime_walk_pic = load_image('./resourceimg/slimepic.png')
-            self.attack_effect_pic=load_image('./resourceimg/deadsprite.png')
+            SLIME.attack_effect_pic=load_image('./resourceimg/deadsprite.png')
+            SLIME.slime_fly_pic= load_image('./resourceimg/bubble.png')
 
         self.x , self.y = 60 , 150
         self.frame_x = 0
@@ -163,18 +188,23 @@ class SLIME:
         self.cur_state = IDLE
         self.cur_state.enter(self,None)
         self.hp = 100
+
         self.jump_height = 5.5
         self.jump_flag = 'nujump'
-        self.flying = 0
         self.j_velocity = 0
         self.j_gravity = 0.10
+        self.pre_j_velocity=0
+
         self.attacked_delay = 1
         self.attacked_draw = 0
-        self.monster = None
+
+        self.flying='unflying'
+        self.flying_g=0.3
+
         self.bullets = []
         self.prepos_x = 0
         self.world_pos = 'ground'
-        self.pre_j_velocity=0
+
 
     def update(self):
 
@@ -232,7 +262,7 @@ class SLIME:
         if massage == 'slime::monster':
             if self.attacked_delay>1:
                 if type(other) is BATMONSTER:
-                    self.hp -= 25
+                    self.hp -= 15
                 else:
                     self.hp -= 10
                 self.attacked_delay = 0
@@ -251,15 +281,22 @@ class SLIME:
             game_framework.push_state(undergroundbackground)
 
     def jumping(self):
-        self.j_velocity = self.jump_height
+            self.j_velocity = self.jump_height
+
 
     def jumping_update(self):
+        if self.flying is 'unflying':
             self.y += self.j_velocity * RUN_SPEED_PPS * game_framework.frame_time
             self.pre_j_velocity = self.j_velocity
             self.j_velocity -= self.j_gravity
-
-
-
+        elif self.flying is 'flying':
+            if self.j_velocity > 0:
+                self.y += self.j_velocity * RUN_SPEED_PPS * game_framework.frame_time
+                self.pre_j_velocity = self.j_velocity
+                self.j_velocity -= self.j_gravity
+            else:
+                self.y -= self.flying_g* RUN_SPEED_PPS * game_framework.frame_time
+                self.pre_j_velocity = -self.flying_g
     def shoot_bullet(self):
         self.hp -= 2
         bullets = BULLET( self.x ,self.y ,self.face_dir, self.hp )
