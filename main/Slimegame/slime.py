@@ -5,7 +5,7 @@ from bullet import BULLET
 import server
 import undergroundbackground
 import failstage
-
+from  batmonster import BATMONSTER
 
 RD, LD, RU, LU,JD,SPACE= range(6)
 event_name=['RD','LD','RU','LU','JD','SPACE']
@@ -231,7 +231,10 @@ class SLIME:
 
         if massage == 'slime::monster':
             if self.attacked_delay>1:
-                self.hp -= 10
+                if type(other) is BATMONSTER:
+                    self.hp -= 25
+                else:
+                    self.hp -= 10
                 self.attacked_delay = 0
                 self.attacked_draw = 0
         if massage == 'slime::slide':
@@ -258,7 +261,6 @@ class SLIME:
 
 
     def shoot_bullet(self):
-
         self.hp -= 2
         bullets = BULLET( self.x ,self.y ,self.face_dir, self.hp )
         game_world.add_object(bullets,1)

@@ -8,8 +8,9 @@ def add_object(o,depth):
 def add_objects(o,depth):
     objects[depth]+=o
 
+
 def remove_object(o):
-    for layer in objects :
+    for layer in objects:
         try:
              layer.remove(o)
              remove_collision_object(o)
@@ -18,7 +19,6 @@ def remove_object(o):
         except:
             pass
     raise ValueError('Trying destroy non existing object')
-
 
 
 def all_objects():
