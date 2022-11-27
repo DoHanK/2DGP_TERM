@@ -18,7 +18,7 @@ def remove_object(o):
              return
         except:
             pass
-    raise ValueError('Trying destroy non existing object')
+    # raise ValueError('Trying destroy non existing object')
 
 
 def all_objects():

@@ -187,7 +187,7 @@ class SLIME:
         self.event_que = []
         self.cur_state = IDLE
         self.cur_state.enter(self,None)
-        self.hp = 100
+        self.hp = 50
 
         self.jump_height = 5.5
         self.jump_flag = 'nujump'
@@ -205,9 +205,13 @@ class SLIME:
         self.prepos_x = 0
         self.world_pos = 'ground'
 
-
+        self.batkill = 0
     def update(self):
-
+        if self.world_pos is 'underground':
+            if self.batkill is server.batmonstercount:
+                game_world.add_object(server.door , 0)
+                game_world.add_collision_pairs(server.slime, server.door,"slime::door")
+                self.batkill+=1
         if self.hp<30:
             game_framework.change_state(failstage)
 
@@ -237,7 +241,6 @@ class SLIME:
         self.event_que.insert(0,event)
 
     def handle_event(self,event):
-
         if (event.type, event.key) in key_event_table:
             key_event = key_event_table[(event.type, event.key)]
             self.add_event(key_event)
@@ -256,15 +259,15 @@ class SLIME:
             self.jump_flag = 'unjump'
 
         if massage == 'slime::item':
-            self.hp += 50
-            self.y += 20
+            self.hp += 8
+            self.y += 4
 
         if massage == 'slime::monster':
             if self.attacked_delay>1:
                 if type(other) is BATMONSTER:
-                    self.hp -= 15
+                    self.hp -= 8
                 else:
-                    self.hp -= 10
+                    self.hp -= 4
                 self.attacked_delay = 0
                 self.attacked_draw = 0
         if massage == 'slime::slide':
@@ -298,7 +301,7 @@ class SLIME:
                 self.y -= self.flying_g* RUN_SPEED_PPS * game_framework.frame_time
                 self.pre_j_velocity = -self.flying_g
     def shoot_bullet(self):
-        self.hp -= 2
+        self.hp -= 1
         bullets = BULLET( self.x ,self.y ,self.face_dir, self.hp )
         game_world.add_object(bullets,1)
         game_world.add_collision_pairs(bullets, None, "bullet::background")

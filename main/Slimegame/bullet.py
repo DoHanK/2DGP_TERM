@@ -2,7 +2,7 @@ from pico2d import *
 import game_world
 import game_framework
 import server
-
+from batmonster import BATMONSTER
 PIXEL_PER_METER = (10.0 / 0.3) # 10 pixel 30 cm
 RUN_SPEED_KMPH = 100.0 # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)  #m/m
@@ -29,6 +29,9 @@ class BULLET:
     def handle_collision(self, other, massage):
         if massage =="bullet::monster":
                 game_world.remove_object(self)
+                if type(other)is BATMONSTER:
+                    server.slime.batkill+=1
+
 
         if massage =="bullet::background":
                 game_world.remove_object(self)
