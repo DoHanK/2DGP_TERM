@@ -9,6 +9,9 @@ class BACKGROUND:
     sky_img = None
     bush_img = None
     underground_img = None
+    underground_bgm = None
+    ground_bgm = None
+
     def __init__(self,grid):
 
         if BACKGROUND.sky_img is  None:
@@ -17,6 +20,11 @@ class BACKGROUND:
             BACKGROUND.tileset_img=load_image('./resourceimg/tilesetgrass.png')
             BACKGROUND.sky_img=load_image('./resourceimg/sky.png')
             BACKGROUND.bush_img=load_image("./resourceimg/bush.png")
+            BACKGROUND.ground_bgm = load_music('./sound/upgroundsound.mp3')
+            BACKGROUND.underground_bgm = load_music('./sound/undergroundsound.mp3')
+            BACKGROUND.ground_bgm.set_volume(100)
+            BACKGROUND.underground_bgm.set_volume(100)
+
 
         self.pic1pos = [5,5,86,27] #잔디있는거
         self.pic2pos = [5,5,86,16]

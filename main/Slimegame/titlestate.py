@@ -11,15 +11,18 @@ FRAMES_PER_ACTION = 4
 image = None
 button = None
 draw_flag = 0
-
+bgm = None
 def enter():
-    global image , button
+    global image , button ,bgm
     image = load_image('./resourceimg/gametittle.png')
     button = load_image('./resourceimg/pressbutton.png')
-
+    bgm = load_music('./sound/startsound.mp3')
+    bgm.set_volume(100)
+    bgm.repeat_play()
 
 def exit():
-    global image
+    global image,bgm
+    del bgm
     del image
 
 
