@@ -40,7 +40,7 @@ class IDLE:
         self.dir=0
         self.frame_x = 0
         if event == JD:
-            if self.jump_flag is not 'jump':
+            if self.jump_flag != 'jump':
                 self.jumping()
                 self.jumping_update()
                 self.jump_flag = 'jump'
@@ -62,7 +62,7 @@ class IDLE:
 
     @staticmethod
     def draw(self):
-        if self.flying is 'flying':
+        if self.flying == 'flying':
             self.slime_fly_pic.clip_draw(157,7,145,143,self.x,self.y,self.hp,self.hp)
 
         if self.attacked_delay > 1:
@@ -80,9 +80,9 @@ class IDLE:
               else:
                  self.slime_walk_pic.clip_draw(self.frame_x * 50, 7 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
 
-        if self.flying is 'flying': #pic비눗방울 디테일
+        if self.flying == 'flying': #pic비눗방울 디테일
             self.slime_fly_pic.clip_draw(8,8,143,140,self.x,self.y,self.hp,self.hp)
-        draw_rectangle(*self.get_bb())
+        # draw_rectangle(*self.get_bb())
 
 
 class RUN:
@@ -103,7 +103,7 @@ class RUN:
         self.face_dir = self.dir
 
         if event == JD:
-            if self.jump_flag is not 'jump':
+            if self.jump_flag != 'jump':
                 self.jumping()
                 self.jumping_update()
                 self.jump_flag = 'jump'
@@ -127,7 +127,7 @@ class RUN:
         self.x = clamp(0, self.x, 800)
 
     def draw(self):
-        if self.flying is 'flying':
+        if self.flying == 'flying':
             self.slime_fly_pic.clip_draw(157,7,145,143,self.x,self.y,self.hp,self.hp)
 
         if self.attacked_delay > 1:
@@ -145,9 +145,9 @@ class RUN:
                 else:
                     self.slime_walk_pic.clip_draw(int(self.frame_x) * 50, 7 * 35, 50, 35, self.x, self.y, self.hp, self.hp)
 
-        if self.flying is 'flying': #pic비눗방울 디테일
+        if self.flying == 'flying': #pic비눗방울 디테일
             self.slime_fly_pic.clip_draw(8,8,143,140,self.x,self.y,self.hp,self.hp)
-        draw_rectangle(*self.get_bb())
+        # draw_rectangle(*self.get_bb())
 
 
 next_state = {
@@ -207,11 +207,14 @@ class SLIME:
 
         self.batkill = 0
     def update(self):
-        if self.world_pos is 'underground':
+        if self.world_pos == 'underground':
             if self.batkill is server.batmonstercount:
+                server.door.sound.set_volume(50)
+                server.door.sound.repeat_play()
                 game_world.add_object(server.door , 0)
                 game_world.add_collision_pairs(server.slime, server.door,"slime::door")
-                self.batkill+=1
+                self.batkill += 1
+
         if self.hp<30:
             game_framework.change_state(failstage)
 
@@ -224,7 +227,6 @@ class SLIME:
         if self.event_que:
             event=self.event_que.pop()
             self.cur_state.exit(self,event)
-
             try:
                 self.cur_state=next_state[self.cur_state][event]
             except KeyError:
@@ -288,11 +290,11 @@ class SLIME:
 
 
     def jumping_update(self):
-        if self.flying is 'unflying':
+        if self.flying == 'unflying':
             self.y += self.j_velocity * RUN_SPEED_PPS * game_framework.frame_time
             self.pre_j_velocity = self.j_velocity
             self.j_velocity -= self.j_gravity
-        elif self.flying is 'flying':
+        elif self.flying == 'flying':
             if self.j_velocity > 0:
                 self.y += self.j_velocity * RUN_SPEED_PPS * game_framework.frame_time
                 self.pre_j_velocity = self.j_velocity

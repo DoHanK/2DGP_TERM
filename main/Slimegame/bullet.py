@@ -10,14 +10,17 @@ RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0) # m/s
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 class BULLET:
-    bullet=None
+    bullet = None
+    corrisionsound = None
     def __init__(self , x , y , dir, size):
         if BULLET.bullet == None:
             BULLET.bullet = load_image("./resourceimg/R_bullet.png")
+            BULLET.corrisionsound =load_wav("./sound/effect/attacksound.wav")
+            BULLET.corrisionsound.set_volume(12)
         self.pos_y = y
         self.pos_x = x
         self.dir = dir
-        self.size= size
+        self.size = size
     def update(self):
         if self.dir == 1:
             self.pos_x += RUN_SPEED_PPS*game_framework.frame_time
@@ -27,6 +30,7 @@ class BULLET:
             game_world.remove_object(self)
 
     def handle_collision(self, other, massage):
+        self.corrisionsound.play(1)
         if massage =="bullet::monster":
                 game_world.remove_object(self)
                 if type(other)is BATMONSTER:
@@ -45,4 +49,4 @@ class BULLET:
                 self.bullet.clip_draw(0 , 0 , 50 , 35 , self.pos_x , self.pos_y , int(self.size/4) , int(self.size/6) )
             elif self.dir ==- 1:
                 self.bullet.clip_composite_draw(0 , 0 , 50 , 35 , 0 , 'h' , self.pos_x , self.pos_y , int(self.size/4) , int(self.size/6) )
-            draw_rectangle(*self.get_bb())
+            # draw_rectangle(*self.get_bb())

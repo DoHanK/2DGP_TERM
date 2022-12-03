@@ -22,8 +22,8 @@ class BACKGROUND:
             BACKGROUND.bush_img=load_image("./resourceimg/bush.png")
             BACKGROUND.ground_bgm = load_music('./sound/upgroundsound.mp3')
             BACKGROUND.underground_bgm = load_music('./sound/undergroundsound.mp3')
-            BACKGROUND.ground_bgm.set_volume(100)
-            BACKGROUND.underground_bgm.set_volume(100)
+            BACKGROUND.ground_bgm.set_volume(32)
+            BACKGROUND.underground_bgm.set_volume(32)
 
 
         self.pic1pos = [5,5,86,27] #잔디있는거
@@ -55,10 +55,10 @@ class BACKGROUND:
             for x in range(0,self.colum):
                 if(self.grid[y][x]==1 ):
                     self.tileset_img.clip_composite_draw(self.pic1pos[0] ,self.pic1pos[1] ,self.pic1pos[2] ,self.pic1pos[3] ,0,' ',50*x+25 -server.camera_x,50*(11-y)+25,50,50)
-                    draw_rectangle(*self.get_bb(x,y) )
+                    # draw_rectangle(*self.get_bb(x,y) )
                 elif self.grid[y][x]==2 :
                     self.tileset_img.clip_composite_draw(self.pic2pos[0], self.pic2pos[1], self.pic2pos[2], self.pic2pos[3], 0, ' ', 50 * x + 25 - server.camera_x, 50 * (11 - y) + 25, 50, 50)
-                    draw_rectangle(*self.get_bb(x, y))
+                    # draw_rectangle(*self.get_bb(x, y))
 
     def update(self):
         pass

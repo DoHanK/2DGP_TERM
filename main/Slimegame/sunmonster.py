@@ -26,7 +26,7 @@ class SUNMONSTER:
 
     def draw(self):
              self.sunpic.clip_draw(self.frame_x * 50, 0, 50, 35, self.x - server.camera_x, self.y, 50, 50)
-             draw_rectangle(*self.get_bb())
+             # draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 20 - server.camera_x , self.y - 20 , self.x + 20 - server.camera_x , self.y + 20

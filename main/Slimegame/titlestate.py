@@ -17,7 +17,7 @@ def enter():
     image = load_image('./resourceimg/gametittle.png')
     button = load_image('./resourceimg/pressbutton.png')
     bgm = load_music('./sound/startsound.mp3')
-    bgm.set_volume(100)
+    bgm.set_volume(32)
     bgm.repeat_play()
 
 def exit():
